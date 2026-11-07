@@ -1,0 +1,2098 @@
+SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
+SADHANA REPORT MANAGEMENT SYSTEM
+Document Type: Software Requirements Specification
+Project Name: Sadhana Report Management System
+Document Version: 1.0
+Status: Requirements Baseline — Ready for System Design
+Language: English
+Proposed Backend: Python FastAPI
+Selected Database: MySQL
+Proposed Frontend: React
+Target Platform: Responsive Web Application + Progressive Web App (PWA)
+Initial Hosting Preference: Free-tier hosting with a free subdomain
+Primary Users: ISKCON Devotees, Counsellors, Senior Devotees and Administrators
+________________________________________
+DOCUMENT CONTROL
+1. Purpose of This Document
+This document defines the complete requirements, expected behaviour, modules, user roles, business rules, workflows, data requirements, technical architecture and development guidelines for the Sadhana Report Management System.
+It is intended to serve as the central reference for:
+1.	Understanding what the project is supposed to do.
+2.	Developing the frontend and backend.
+3.	Designing the database.
+4.	Implementing user roles and permissions.
+5.	Testing the application.
+6.	Maintaining the application after deployment.
+7.	Resuming development after a break without losing project context.
+Important: This document describes the intended system. It does not mean that the features have already been implemented.
+2. Project Overview
+The Sadhana Report Management System is a web-based application designed for ISKCON devotees to record, manage, review and analyse their daily spiritual practices.
+The application will allow devotees to submit daily Sadhana Reports containing information about their daily routine, Japa, reading, devotional activities, chanting quality, sleep schedule, spiritual discipline and other activities.
+Counsellors will be able to monitor the progress of their assigned devotees. Senior Devotees will receive limited read-only access to the devotees assigned to them. Administrators will manage users, permissions, reports, assignments, system settings and backups.
+The application will maintain historical records and provide reports, graphs, progress scores, PDF downloads and Excel exports.
+The system should be designed for long-term use, with the possibility of supporting multiple Counsellors and a growing number of devotees.
+3. Problem Statement
+Managing daily Sadhana information manually can create several problems:
+•	Devotees may forget to submit their daily reports.
+•	Counsellors may find it difficult to monitor multiple devotees.
+•	Historical Sadhana information may be scattered across different files or spreadsheets.
+•	Manual calculations of Japa, reading and other activities can be time-consuming.
+•	Weekly and monthly progress comparisons may require manual work.
+•	Data may be lost when reports are maintained only in local files.
+•	Managing assignments and permissions becomes difficult as the number of devotees increases.
+The proposed system aims to solve these problems through a centralized digital platform.
+4. Project Objectives
+The main objectives are:
+1.	Provide a simple platform for daily Sadhana report submission.
+2.	Maintain accurate historical records of devotees.
+3.	Make Japa tracking easier.
+4.	Monitor daily, weekly and monthly Sadhana progress.
+5.	Allow Counsellors to guide their assigned devotees.
+6.	Provide limited and controlled Senior Devotee access.
+7.	Give Administrators centralized management facilities.
+8.	Generate useful reports and analytics.
+9.	Automate Excel data updates.
+10.	Maintain automatic database backups.
+11.	Protect individual devotee information.
+12.	Support mobile and desktop usage.
+13.	Keep the architecture expandable for future requirements.
+5. Project Scope
+5.1 Included in the Initial System
+•	User registration and account management.
+•	Admin, Devotee, Counsellor and Senior Devotee roles.
+•	Daily Sadhana report submission.
+•	Japa tracking.
+•	Spiritual activity tracking.
+•	Counsellor assignment and management.
+•	Senior Devotee dashboard.
+•	Admin dashboard.
+•	Report history.
+•	Calendar and list views.
+•	Progress graphs and analytics.
+•	Daily, weekly and monthly scores.
+•	PDF and Excel downloads.
+•	Master Excel automation.
+•	Database backup and restoration.
+•	Website notifications.
+•	Missing-report reminders.
+•	Responsive website.
+•	PWA support.
+•	English-language interface.
+5.2 Future Expansion
+The architecture should allow:
+•	Multiple Counsellors.
+•	A larger number of devotees.
+•	Additional Senior Devotees.
+•	Additional ISKCON centres, if required later.
+•	Advanced analytics.
+•	Additional notification channels.
+•	A dedicated Android application, if required later.
+These future features should not unnecessarily complicate the first version.
+5.3 Outside the Initial Scope
+Unless separately approved, the first version will not include:
+•	Live Japa counting.
+•	Individual Mala-by-Mala tracking.
+•	Photo or document attachments in daily reports.
+•	WhatsApp notifications.
+•	Email notifications.
+•	Public access to devotees' reports.
+•	Social networking or public devotee profiles.
+•	Automatic editing of reports by Counsellors.
+•	A separate native Android application.
+________________________________________
+6. STAKEHOLDERS AND USER ROLES
+The system will support four primary roles.
+6.1 Administrator
+The Administrator is responsible for managing the entire application.
+The first Administrator will be the project owner.
+Admin responsibilities
+1.	Create devotee accounts.
+2.	Manage user accounts.
+3.	Assign Counsellors.
+4.	Assign Senior Devotees.
+5.	Manage user roles.
+6.	View all devotees.
+7.	View all reports.
+8.	View complete historical records.
+9.	View individual and overall analytics.
+10.	Manage system settings.
+11.	Manage spiritual activities.
+12.	Manage account requests.
+13.	Review requests requiring Admin approval.
+14.	Generate PDF and Excel reports.
+15.	Manage master Excel data.
+16.	Monitor database backup status.
+17.	Restore the database from backups.
+18.	Suspend and reactivate accounts according to the approval rules.
+Admin account requirements
+The project owner will have:
+•	Admin role.
+•	Devotee role.
+•	A separate Counsellor assigned to their Devotee account.
+The same person must be able to use Admin and Devotee functionality without needing two unrelated login accounts.
+The application should support multiple roles for a single user account.
+6.2 Devotee
+A Devotee is the primary user who submits daily Sadhana information.
+Devotee permissions
+1.	Log in securely.
+2.	View and edit their permitted profile information.
+3.	Submit daily Sadhana Reports.
+4.	View their own reports.
+5.	Edit a report within the permitted editing period.
+6.	View missing reports.
+7.	Copy the previous day's report as a starting point.
+8.	Preview a report before submission.
+9.	View Japa history.
+10.	View Sadhana activities.
+11.	View daily, weekly and monthly progress.
+12.	View progress graphs.
+13.	Download their own reports.
+14.	View website notifications.
+15.	Submit applicable requests.
+16.	Request a Counsellor change.
+Devotee privacy
+A Devotee must not be able to access another Devotee's private reports, personal details or progress information.
+6.3 Counsellor
+A Counsellor guides a group of assigned devotees.
+Counsellor permissions
+1.	View assigned devotees.
+2.	View assigned devotees' profiles.
+3.	View assigned devotees' daily reports.
+4.	View complete available report history.
+5.	View individual progress.
+6.	View assigned devotees' analytics.
+7.	Filter reports by date and devotee.
+8.	View missing reports.
+9.	Respond to applicable requests.
+10.	Participate in approval workflows where required.
+11.	Request a report correction from a Devotee.
+Counsellor restrictions
+•	Cannot view unrelated devotees.
+•	Cannot assign themselves to devotees.
+•	Cannot directly edit a Devotee's submitted report.
+•	Cannot access Admin-only settings.
+•	Cannot download or export information outside their permitted scope.
+Recommended correction process: A Counsellor can identify an incorrect report and request a correction. The Devotee reviews and submits the corrected information. The system preserves the original submission information where technically appropriate.
+6.4 Senior Devotee
+A Senior Devotee receives limited access to support assigned devotees.
+Recommended permissions
+1.	View assigned devotees.
+2.	View assigned devotees' reports.
+3.	View assigned devotees' progress.
+4.	View available report history.
+5.	Use permitted filters.
+Restrictions
+•	Read-only access.
+•	Cannot edit reports.
+•	Cannot delete reports.
+•	Cannot assign Counsellors.
+•	Cannot manage user accounts.
+•	Cannot access unrelated devotees.
+•	Cannot modify system settings.
+The Senior Devotee should only see information explicitly included in their assigned access.
+________________________________________
+7. ACCOUNT MANAGEMENT AND REGISTRATION
+7.1 Account Creation
+The Administrator will create new Devotee accounts.
+The registration process should work as follows:
+1.	Admin opens the User Management section.
+2.	Admin selects Create New Devotee.
+3.	Admin enters the required initial information.
+4.	The system creates the account.
+5.	The system generates an invitation link or temporary password.
+6.	The Devotee receives the account invitation.
+7.	The Devotee opens the invitation.
+8.	The Devotee completes the remaining profile information.
+9.	The Devotee sets a permanent password.
+10.	The account follows the configured approval process.
+11.	The account becomes active after all required approvals.
+7.2 Login
+The system should support login using:
+•	Email address and password.
+•	Mobile number and password.
+Only one account should be associated with a particular email address.
+The system must validate login credentials securely.
+7.3 Password Management
+The system should support:
+•	Secure password storage.
+•	Password change.
+•	Forgot password.
+•	Email password-reset link.
+•	Password confirmation.
+•	Appropriate password validation.
+•	Session management.
+Passwords must never be stored as plain text.
+7.4 Profile Management
+A Devotee should be able to edit permitted profile details.
+The system should support controlled changes to sensitive fields.
+Previously discussed account rules include:
+•	Email changes require Admin approval.
+•	Mobile number changes require OTP verification.
+•	Duplicate accounts can be merged by Admin.
+•	Suspended accounts require Admin permission for access.
+•	Historical reports remain available after account closure.
+•	Account reactivation follows Counsellor approval.
+•	Account deletion requests are reviewed by Admin.
+•	Multiple-device login is permitted.
+These account-management rules should be retained in the implementation plan and verified against the final account workflow before coding.
+7.5 Account Status
+Recommended account statuses:
+•	Invitation Pending
+•	Profile Incomplete
+•	Pending Approval
+•	Active
+•	Suspended
+•	Closure Requested
+•	Closed
+The application should prevent unauthorized login and access based on account status.
+7.6 Duplicate Accounts
+The system should prevent duplicate email registration.
+Admin should have a controlled facility to merge duplicate accounts where necessary.
+Historical reports must remain correctly associated with the surviving account.
+________________________________________
+8. DAILY SADHANA REPORT MODULE
+This is the central module of the entire application.
+8.1 Purpose
+The Daily Sadhana Report module allows each Devotee to record their daily spiritual practices.
+Each Devotee should normally submit one main report per day.
+8.2 Report Sections
+The report should contain the following sections.
+A. Daily Routine
+Fields:
+•	Report Date.
+•	Wake-up Time.
+•	Sleep Time.
+The system should validate time values.
+The report date should be based on the application's configured timezone.
+B. Japa Information
+Fields:
+•	Total Rounds.
+•	Total Japa Duration.
+•	Japa Start Time or Session Times, where applicable.
+•	Japa End Time or Session Times, where applicable.
+•	Japa Quality.
+Japa Quality options:
+•	Low
+•	Medium
+•	High
+The report should support multiple Japa sessions in one day.
+The final daily Japa total should combine the sessions.
+C. Reading Information
+Fields:
+•	Reading Completed: Yes/No.
+•	Book Name.
+•	Reading Duration.
+The system should allow the Devotee to select or enter the relevant book name.
+The book name should be maintained consistently for reporting.
+D. Seva Information
+Fields:
+•	Seva Type.
+•	Seva Duration.
+•	Completion Status.
+The system should support recording different kinds of devotional service.
+E. Morning Worship
+Morning worship should be recorded as a combined section rather than requiring many unnecessary separate entries.
+The exact individual activities included in this section should be finalized during the form design.
+F. Four Regulative Principles
+The report should include tracking for the four regulative principles.
+Each principle should have an appropriate completion or adherence field.
+A notes field should be available where required.
+The interface should avoid unnecessarily complicated inputs.
+G. Satsanga
+Field:
+•	Satsanga: Yes/No.
+H. Lecture
+Fields:
+•	Lecture Attended: Yes/No.
+•	Lecture Duration.
+•	Lecture Topic.
+•	Speaker Name.
+I. Bhakti Time
+The system should calculate or display time spent on selected devotional activities where the required data is available.
+Avoid double-counting the same activity duration.
+J. Realization
+A text area should be available for the Devotee to write personal spiritual realizations or reflections.
+This field should support normal text entry.
+8.3 Report Submission Rules
+1.	A Devotee can submit one main report for each date.
+2.	Duplicate submissions for the same date should be prevented.
+3.	The Devotee should be able to preview the report before submission.
+4.	The system should validate mandatory fields.
+5.	The system should identify incomplete reports.
+6.	The system should show a clear submission confirmation.
+7.	A successful submission should update the Devotee's report history.
+8.	A successful submission should trigger the Master Excel update process.
+8.4 Report Editing Rules
+A submitted report can be edited within 24 hours of submission.
+After the 24-hour period, normal editing should be disabled.
+The system should clearly show whether a report is editable.
+The application should retain relevant submission timestamps.
+A report correction requested by a Counsellor should follow the controlled correction process.
+8.5 Late Submission
+Late report submission is not allowed under the current requirements.
+If a report is not submitted within the permitted reporting period:
+•	The date should appear as Missing.
+•	The system should not silently create a report.
+•	The Devotee should see the missing date in their report history.
+•	The system should send a reminder if the reminder conditions are satisfied.
+The exact daily reporting deadline and timezone must be configured before implementation.
+8.6 Copy Previous Report
+The Devotee should have an option to copy the previous day's report.
+The copied information should be inserted as a draft.
+The Devotee must review the information before submitting.
+The copied report must not be submitted automatically.
+8.7 Report Status
+Recommended report statuses:
+•	Not Started
+•	Draft
+•	Submitted
+•	Edited
+•	Missing
+•	Correction Requested
+•	Corrected
+The system should use these statuses consistently in dashboards and reports.
+________________________________________
+9. JAPA TRACKING MODULE
+9.1 Purpose
+This module tracks the Devotee's daily chanting activity.
+It should be simple and should not require the Devotee to record every individual Mala.
+9.2 Japa Dashboard
+The Japa Dashboard should display:
+•	Daily Japa Target.
+•	Total Rounds Completed.
+•	Remaining Rounds.
+•	Completion Percentage.
+•	Total Japa Duration.
+•	Japa Sessions.
+•	Japa History.
+9.3 Multiple Japa Sessions
+The Devotee may chant at different times throughout the day.
+Example:
+Session	Start Time	End Time	Rounds
+Morning	5:00 AM	6:30 AM	8
+Afternoon	2:00 PM	2:30 PM	4
+Evening	7:00 PM	7:30 PM	4
+Total	—	—	16
+The application should calculate:
+•	Total rounds.
+•	Total duration.
+•	Remaining target.
+•	Target completion percentage.
+These values are illustrative examples, not fixed targets.
+9.4 Japa Target
+Each Devotee should have an individual Japa target.
+The target should be changeable through the permitted system process.
+The application should calculate:
+Completion Percentage = (Completed Rounds / Daily Target) × 100
+If the target is zero or missing, the system must avoid division errors and display an appropriate status.
+If the Devotee does not meet the target, the application should display the achieved percentage.
+9.5 Japa History
+The Devotee should be able to view:
+•	Daily Japa history.
+•	Weekly Japa history.
+•	Monthly Japa history.
+•	Calendar view.
+•	List view.
+•	Date filters.
+9.6 Excluded Features
+The initial version will not include:
+•	Live Japa counter.
+•	Individual Mala recording.
+•	Automatic tracking of physical chanting activity.
+The Devotee will enter the completed total after chanting.
+________________________________________
+10. SPIRITUAL ACTIVITIES MODULE
+10.1 Purpose
+This module maintains the list of devotional activities that can be recorded in the Daily Sadhana Report.
+10.2 Activity Categories
+The activities will be divided into two sections:
+1.	Daily Activities.
+2.	Optional Activities.
+10.3 Activity Management
+The system should maintain a fixed list of activities.
+Only Admin can add new activities.
+Admin should be able to manage the activity list through the Admin Panel.
+10.4 Activity Status
+Each activity should support:
+•	Done.
+•	Not Done.
+The application should save the activity status against the relevant Devotee and report date.
+10.5 Activity History
+The system should allow users with appropriate permissions to review previous activity records.
+________________________________________
+11. COUNSELLOR DASHBOARD
+11.1 Purpose
+The Counsellor Dashboard provides an overview of the Counsellor's assigned devotees.
+11.2 Dashboard Information
+The dashboard should display:
+•	Total Assigned Devotees.
+•	Recently Submitted Reports.
+•	Missing Reports.
+•	Individual Devotee Progress.
+•	Weekly Progress.
+•	Monthly Progress.
+•	Pending Requests.
+•	Relevant notifications.
+11.3 Devotee List
+The Counsellor should be able to:
+•	View assigned devotees.
+•	Search assigned devotees.
+•	Filter by report status.
+•	Filter by date.
+•	Open individual devotee profiles.
+•	View report history.
+11.4 Individual Devotee View
+The individual view should show:
+•	Profile details permitted to the Counsellor.
+•	Daily Sadhana Reports.
+•	Japa history.
+•	Activity completion.
+•	Reading information.
+•	Weekly progress.
+•	Monthly progress.
+•	Missing report dates.
+•	Relevant requests.
+11.5 Counsellor Assignment
+Only Admin should assign Counsellors.
+A Devotee should have an identifiable current Counsellor.
+The system should retain the assignment history so that older records remain understandable if a Counsellor changes.
+11.6 Counsellor Change Request
+The recommended workflow is:
+1.	Devotee submits a Counsellor Change Request.
+2.	System creates a request record.
+3.	Admin receives a notification.
+4.	Admin reviews the request.
+5.	Admin approves or rejects it.
+6.	If approved, Admin assigns a new Counsellor.
+7.	System updates the current assignment.
+8.	System preserves previous assignment history.
+9.	Relevant users receive a notification.
+The old and new Counsellors do not need to approve the request unless this policy is changed later.
+11.7 Report Correction
+Counsellors should not directly modify submitted reports.
+If a correction is required:
+1.	Counsellor identifies the incorrect information.
+2.	Counsellor submits a correction request.
+3.	Devotee receives a notification.
+4.	Devotee reviews the correction.
+5.	Devotee edits and resubmits the permitted information.
+6.	System updates the report and its applicable status.
+________________________________________
+12. SENIOR DEVOTEE DASHBOARD
+12.1 Purpose
+This module provides limited monitoring access to Senior Devotees.
+12.2 Recommended Access
+Senior Devotees should only see the devotees assigned to them.
+They should have read-only access to:
+•	Assigned devotee information.
+•	Available daily reports.
+•	Report history.
+•	Japa progress.
+•	Daily, weekly and monthly progress.
+•	Relevant filters.
+12.3 Restrictions
+Senior Devotees must not:
+•	Edit reports.
+•	Delete reports.
+•	Modify user accounts.
+•	Assign Counsellors.
+•	Change user permissions.
+•	Access Admin settings.
+•	View unrelated devotees.
+All access must be enforced by the backend, not only hidden in the frontend.
+________________________________________
+13. ADMIN PANEL AND ROLE PERMISSIONS
+13.1 Purpose
+The Admin Panel provides centralized control over the entire application.
+13.2 Admin Dashboard
+The dashboard should display:
+•	Total Devotees.
+•	Active Devotees.
+•	Suspended Accounts.
+•	Total Counsellors.
+•	Total Senior Devotees.
+•	Reports Submitted Today.
+•	Missing Reports.
+•	Pending Requests.
+•	Overall Sadhana Summary.
+•	Database Backup Status.
+•	Recent System Notifications.
+13.3 User Management
+Admin should be able to:
+•	Create accounts.
+•	View accounts.
+•	Search accounts.
+•	Filter accounts.
+•	Edit permitted account details.
+•	Assign roles.
+•	Suspend accounts.
+•	Reactivate accounts.
+•	Review account closure requests.
+•	Merge duplicate accounts.
+13.4 Counsellor Management
+Admin should be able to:
+•	Create Counsellor accounts.
+•	View Counsellors.
+•	Assign devotees.
+•	Change assignments.
+•	View assigned-devotee counts.
+•	Manage Counsellor availability.
+The system should be designed so that additional Counsellors can be added without changing the application architecture.
+13.5 Senior Devotee Management
+Admin should be able to:
+•	Assign Senior Devotees.
+•	Change assignments.
+•	Remove assignments.
+•	Control the scope of their access.
+13.6 Admin Report Management
+Admin should be able to:
+•	View all reports.
+•	Filter reports.
+•	Search reports.
+•	View historical records.
+•	Download permitted reports.
+•	View missing reports.
+•	View individual progress.
+•	View overall analytics.
+13.7 Request Management
+Admin should have a centralized Requests section.
+It should display:
+•	Request Type.
+•	Requesting User.
+•	Request Date.
+•	Current Status.
+•	Required Approval.
+•	Action Required.
+•	Request History.
+________________________________________
+14. APPROVAL AND REQUEST MANAGEMENT
+14.1 General Requirement
+Different types of requests may require different approval sequences.
+The application must not use one fixed approval workflow for every request.
+Each request type should have a defined approval policy.
+14.2 Recommended Request Types
+•	Profile Approval.
+•	Counsellor Change.
+•	Account Reactivation.
+•	Account Closure.
+•	Email Change.
+•	Mobile Number Change.
+•	Other Admin-controlled requests.
+14.3 Request Status
+Recommended statuses:
+•	Submitted.
+•	Pending Admin Approval.
+•	Pending Counsellor Approval.
+•	Approved.
+•	Rejected.
+•	Cancelled.
+•	Completed.
+14.4 Request Processing
+Each request should contain:
+•	Request ID.
+•	Request Type.
+•	Requested By.
+•	Request Date.
+•	Request Details.
+•	Current Status.
+•	Required Approver.
+•	Approval or Rejection Result.
+•	Completion Date.
+14.5 Approval Rules
+The system should use request-specific rules.
+Examples:
+•	Counsellor Change: Admin approval.
+•	Account Reactivation: Counsellor approval according to the established account policy.
+•	Email Change: Admin approval.
+•	Mobile Change: OTP verification.
+•	Other requests: Defined according to the relevant process.
+The exact rules for every request type must be configured before the related functionality is implemented.
+________________________________________
+15. REPORTS, CHARTS AND ANALYTICS
+15.1 Purpose
+This module converts daily report information into understandable progress summaries.
+15.2 Devotee Analytics
+A Devotee should be able to view:
+•	Daily Sadhana Score.
+•	Weekly Sadhana Score.
+•	Monthly Sadhana Score.
+•	Japa completion.
+•	Reading duration.
+•	Seva duration.
+•	Activity completion.
+•	Report submission consistency.
+•	Missing report dates.
+15.3 Progress Comparison
+A Devotee should be able to compare their own:
+•	Current week with previous weeks.
+•	Current month with previous months.
+•	Weekly Japa performance.
+•	Monthly Japa performance.
+•	Activity completion over time.
+The application must not compare one Devotee's private progress against another Devotee's progress.
+15.4 Counsellor Analytics
+Counsellors should receive:
+•	Assigned-devotee summary.
+•	Individual devotee analytics.
+•	Daily report status.
+•	Weekly progress.
+•	Monthly progress.
+•	Missing report summary.
+•	Filters by date and assigned devotee.
+15.5 Admin Analytics
+Admin should receive:
+•	Overall system summary.
+•	Individual devotee analytics.
+•	Counsellor-wise summary.
+•	Report submission summary.
+•	Missing report summary.
+•	Daily, weekly and monthly trends.
+•	Search and filters.
+15.6 Sadhana Score
+The selected requirement is to calculate Daily, Weekly and Monthly Scores.
+A scoring method must be defined before implementation.
+Recommended approach:
+1.	Define the activities that contribute to the score.
+2.	Define the weight of each activity.
+3.	Define how incomplete activities are handled.
+4.	Define how missing reports are handled.
+5.	Define the calculation period.
+6.	Display the score with an understandable explanation.
+Important: Do not invent a scoring formula during coding. The formula must be approved first. The system should also avoid presenting a score as a spiritual judgement; it is only a summary of recorded activity and consistency.
+15.7 Graphs
+Recommended graph types:
+•	Daily progress trend.
+•	Weekly score trend.
+•	Monthly score trend.
+•	Japa rounds trend.
+•	Reading duration trend.
+•	Activity completion chart.
+•	Report submission consistency chart.
+15.8 Filters
+Filters should include:
+•	Date range.
+•	Daily / Weekly / Monthly.
+•	Devotee.
+•	Counsellor.
+•	Report status.
+•	Activity type.
+The available filters must respect user permissions.
+________________________________________
+16. PDF AND EXCEL REPORTS
+16.1 PDF Download
+The system should allow permitted users to download reports in PDF format.
+PDF reports should contain:
+•	Application name.
+•	Devotee name or permitted identifier.
+•	Report period.
+•	Report details.
+•	Sadhana summary.
+•	Relevant progress information.
+•	Generation date.
+A Devotee should only be able to download their own reports.
+Counsellors should only be able to download information within their assigned scope.
+Admin should have access to the permitted system-wide export functionality.
+16.2 Excel Download
+The system should support Excel downloads for relevant report information.
+Excel data should be organized into clear columns and sheets.
+Recommended information:
+•	Devotee ID.
+•	Devotee Name.
+•	Report Date.
+•	Wake-up Time.
+•	Sleep Time.
+•	Japa Rounds.
+•	Japa Duration.
+•	Japa Quality.
+•	Reading Details.
+•	Seva Details.
+•	Morning Worship.
+•	Regulative Principles.
+•	Satsanga.
+•	Lecture Details.
+•	Bhakti Time.
+•	Realization.
+•	Submission Status.
+The exact Excel structure should be finalized during implementation.
+________________________________________
+17. EXCEL AUTOMATION MODULE
+17.1 Purpose
+The application should maintain one centralized Master Excel File containing all devotees' report information.
+17.2 Master Excel File
+The Master Excel File should contain all permitted report data in a consistent structure.
+Recommended sheets:
+1.	Devotee Master.
+2.	Daily Sadhana Reports.
+3.	Japa Records.
+4.	Spiritual Activities.
+5.	Counsellor Assignments.
+6.	Summary Data.
+The sheets should have stable column names and clear identifiers.
+17.3 Automatic Update
+Whenever a Devotee successfully submits a report:
+1.	Backend saves the report in MySQL.
+2.	Backend confirms the database transaction.
+3.	An Excel update task is triggered.
+4.	The new or updated report is reflected in the Master Excel File.
+5.	The system records whether the export update succeeded.
+6.	If the update fails, the system retries or queues the operation.
+Important technical rule: MySQL must be the primary source of truth. Excel is an export and reporting copy, not the main database.
+The report should not be lost if Excel updating fails.
+17.4 Duplicate Prevention
+The system should identify each report using a stable report ID.
+Updating the Master Excel File must not create duplicate rows when the same report is processed again.
+17.5 Excel Failure Handling
+If Excel updating fails:
+•	The database report must remain saved.
+•	The failure should be recorded in a technical log.
+•	The system should retry the update.
+•	Admin should be able to see the export status.
+•	The system should support rebuilding the Excel file from MySQL.
+________________________________________
+18. CLOUD DATABASE AND BACKUP
+18.1 Database
+MySQL will be the selected database.
+It should store:
+•	User accounts.
+•	Roles.
+•	Profiles.
+•	Daily reports.
+•	Japa sessions.
+•	Spiritual activities.
+•	Counsellor assignments.
+•	Senior Devotee assignments.
+•	Requests.
+•	Approvals.
+•	Notifications.
+•	System configuration.
+•	Backup information.
+18.2 Backup Schedule
+The selected backup policy is:
+•	Daily automatic backup.
+•	Additional weekly backup.
+18.3 Backup Requirements
+The system should:
+1.	Create automatic backups.
+2.	Store backups separately from the main database.
+3.	Protect backup access.
+4.	Retain backup files according to a defined retention policy.
+5.	Monitor backup completion.
+6.	Notify Admin about backup failures.
+7.	Support restoration from a valid backup.
+18.4 Full Database Restoration
+If data is accidentally deleted or the database is damaged:
+1.	Admin initiates the restoration process.
+2.	The system identifies the selected backup.
+3.	The backup is validated.
+4.	Restoration is performed in a controlled environment.
+5.	Database consistency is checked.
+6.	The restored application is verified.
+Critical: A full restoration may replace newer data with older backup data. Therefore, restoration must be a protected operation with a confirmation step and, where possible, a snapshot of the current database before restoration.
+18.5 Backup Testing
+A backup is not considered reliable merely because a file exists.
+The development and maintenance process should include periodic restoration tests.
+________________________________________
+19. SECURITY AND PRIVACY
+19.1 General Security
+The system must protect user accounts and private spiritual records.
+19.2 Authentication
+Requirements:
+•	Secure login.
+•	Password hashing.
+•	Password reset.
+•	Session management.
+•	Account status validation.
+•	Secure authentication tokens or sessions.
+19.3 Authorization
+The backend must verify the user's permissions for every protected operation.
+Frontend restrictions alone are insufficient.
+19.4 Data Privacy
+A Devotee can view only their own information.
+A Counsellor can view only assigned devotees.
+A Senior Devotee can view only assigned devotees and only within their read-only permissions.
+Admin can access the system-wide information required for administration.
+19.5 Sensitive Information
+•	Passwords must never be stored in plain text.
+•	Database credentials must not be exposed in frontend code.
+•	Secret keys must be stored in environment variables or a suitable secret manager.
+•	Database access must be restricted.
+•	Production communication must use HTTPS.
+•	Backup files must be protected.
+19.6 Audit Logging Decision
+The project owner has selected No detailed Admin Activity Audit Log.
+Therefore, the first version should not implement a full record of every Admin action.
+However, the application should retain the technical logs needed to operate safely, such as:
+•	Application errors.
+•	Authentication failures.
+•	Database failures.
+•	Backup failures.
+•	Excel export failures.
+•	Critical system exceptions.
+Technical logs must not be confused with a full Admin Activity Audit Log.
+________________________________________
+20. NOTIFICATION AND REMINDER MODULE
+20.1 Notification Channel
+The selected notification channel is:
+Website Notifications Only.
+Email and WhatsApp notifications are not included in the initial version.
+20.2 Notification Types
+Recommended website notifications:
+•	Account invitation.
+•	Account approval.
+•	Report submission confirmation.
+•	Missing report reminder.
+•	Counsellor change request.
+•	Request approval or rejection.
+•	Profile update result.
+•	Relevant system messages.
+20.3 Daily Report Reminder
+The system should send a reminder only when a report has not been submitted.
+It should not send an unnecessary reminder after successful submission.
+20.4 Reminder Workflow
+1.	System checks the report status for the configured date.
+2.	System checks whether the report has been submitted.
+3.	If the report is already submitted, no reminder is sent.
+4.	If the report is missing and the reminder time has arrived, a notification is created.
+5.	The notification appears in the Devotee's website notification area.
+20.5 Notification History
+Users should be able to view relevant previous notifications.
+Notifications should include:
+•	Notification Type.
+•	Message.
+•	Creation Date.
+•	Read/Unread Status.
+•	Relevant destination, where applicable.
+________________________________________
+21. WEBSITE UI/UX AND MOBILE RESPONSIVENESS
+21.1 Language
+The initial application language will be English.
+21.2 Design Theme
+The selected design direction is:
+Modern + Spiritual Theme.
+The design should feel clean, peaceful and professional.
+It should not look like a complicated administrative system for ordinary Devotees.
+21.3 Visual Design Guidelines
+Recommended design elements:
+•	Clean dashboard layouts.
+•	Clear typography.
+•	Comfortable spacing.
+•	Soft and calm colour palette.
+•	Subtle spiritual visual elements.
+•	Easy-to-understand icons.
+•	Clear forms.
+•	Consistent buttons.
+•	Accessible colour contrast.
+Avoid excessive decoration.
+21.4 Responsive Design
+The application must work on:
+•	Desktop computers.
+•	Laptops.
+•	Tablets.
+•	Android mobile browsers.
+•	Other modern mobile browsers.
+21.5 PWA
+The system should support Progressive Web App functionality.
+Recommended capabilities:
+•	Installable application shortcut.
+•	Application icon.
+•	App-like display.
+•	Responsive navigation.
+•	Appropriate caching of static assets.
+Sensitive report data should not be cached in a way that exposes it on shared devices.
+Offline report submission is not included unless separately designed and approved.
+21.6 Dashboard Layout
+Devotee Dashboard
+•	Today's Report.
+•	Report Submission Status.
+•	Japa Progress.
+•	Sadhana Score.
+•	Recent Reports.
+•	Missing Reports.
+•	Notifications.
+Counsellor Dashboard
+•	Assigned Devotees.
+•	Recent Reports.
+•	Missing Reports.
+•	Individual Progress.
+•	Pending Requests.
+Senior Devotee Dashboard
+•	Assigned Devotees.
+•	Report History.
+•	Progress Overview.
+Admin Dashboard
+•	Total Users.
+•	Role Management.
+•	Report Overview.
+•	Pending Requests.
+•	Analytics.
+•	Excel Export Status.
+•	Backup Status.
+•	System Settings.
+________________________________________
+22. TECHNOLOGY STACK AND SYSTEM ARCHITECTURE
+22.1 Selected Technology
+Layer	Technology	Status
+Frontend	React	Proposed
+Backend	Python FastAPI	Selected
+Database	MySQL	Selected
+API Format	REST API	Recommended
+Authentication	Secure token/session-based authentication	To be designed
+Excel	Python Excel-processing library	To be selected
+PDF	Python PDF-generation library	To be selected
+Charts	React chart library	To be selected
+Hosting	Free-tier initially	To be evaluated
+Domain	Free subdomain initially	Recommended
+Mobile	Responsive Website + PWA	Selected
+22.2 High-Level Architecture
+The system should follow a layered architecture.
+                  USERS
+                    |
+       +------------+-------------+
+       |            |             |
+     Admin       Devotee       Counsellor
+       |            |             |
+       +------------+-------------+
+                    |
+              REACT FRONTEND
+                    |
+                REST APIs
+                    |
+             FASTAPI BACKEND
+                    |
+       +------------+-------------+
+       |            |             |
+ Authentication  Business      Permission
+ & Sessions       Logic         Management
+       |            |             |
+       +------------+-------------+
+                    |
+               MYSQL DATABASE
+                    |
+       +------------+-------------+
+       |            |             |
+    Reports       Analytics     User Data
+       |            |             |
+       +------------+-------------+
+                    |
+       +------------+-------------+
+       |            |             |
+   Excel Export   PDF Export   Backup Service
+22.3 Frontend Responsibilities
+React should handle:
+•	User interface.
+•	Login screens.
+•	Role-specific dashboards.
+•	Report forms.
+•	Report history.
+•	Graphs and charts.
+•	Filters.
+•	Notifications.
+•	Responsive navigation.
+•	API communication.
+The frontend must not be responsible for enforcing final security permissions.
+22.4 Backend Responsibilities
+FastAPI should handle:
+•	Authentication.
+•	Authorization.
+•	User management.
+•	Report submission.
+•	Report validation.
+•	Report editing.
+•	Japa calculations.
+•	Activity management.
+•	Counsellor assignments.
+•	Approval workflows.
+•	Analytics calculations.
+•	PDF generation.
+•	Excel generation.
+•	Backup operations.
+•	Notifications.
+22.5 Database Responsibilities
+MySQL should maintain the permanent application data.
+The database should be designed with:
+•	Primary keys.
+•	Foreign keys.
+•	Appropriate indexes.
+•	Unique constraints.
+•	Valid relationships.
+•	Transaction management.
+•	Consistent timestamps.
+22.6 Backend Structure Recommendation
+A modular backend structure is recommended.
+backend/
+│
+├── app/
+│   ├── main.py
+│   ├── core/
+│   │   ├── config.py
+│   │   ├── security.py
+│   │   └── permissions.py
+│   │
+│   ├── database/
+│   │   ├── connection.py
+│   │   └── base.py
+│   │
+│   ├── models/
+│   ├── schemas/
+│   ├── routers/
+│   ├── services/
+│   ├── repositories/
+│   ├── middleware/
+│   ├── utils/
+│   └── tests/
+│
+├── migrations/
+├── requirements.txt
+├── .env.example
+└── README.md
+Each module should have a clear responsibility.
+Do not put all application code inside one large Python file.
+22.7 Frontend Structure Recommendation
+frontend/
+│
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── layouts/
+│   ├── pages/
+│   ├── features/
+│   │   ├── authentication/
+│   │   ├── devotees/
+│   │   ├── sadhana-reports/
+│   │   ├── japa/
+│   │   ├── activities/
+│   │   ├── counsellors/
+│   │   ├── admin/
+│   │   ├── analytics/
+│   │   └── notifications/
+│   │
+│   ├── services/
+│   ├── hooks/
+│   ├── routes/
+│   ├── context/
+│   └── utils/
+│
+├── public/
+└── package.json
+________________________________________
+23. DATABASE DESIGN REQUIREMENTS
+The following is the recommended initial database design. Exact columns and constraints should be finalized during database design.
+23.1 users
+Purpose: Store account and authentication information.
+Suggested fields:
+•	id
+•	email
+•	mobile_number
+•	password_hash
+•	account_status
+•	is_active
+•	created_at
+•	updated_at
+•	last_login_at
+23.2 roles
+Purpose: Store application roles.
+Suggested fields:
+•	id
+•	role_name
+•	description
+Initial roles:
+•	ADMIN
+•	DEVOTEE
+•	COUNSELLOR
+•	SENIOR_DEVOTEE
+23.3 user_roles
+Purpose: Allow one user to have multiple roles.
+Suggested fields:
+•	id
+•	user_id
+•	role_id
+•	assigned_at
+This is important because the project owner will have both Admin and Devotee roles.
+23.4 devotee_profiles
+Purpose: Store Devotee profile details.
+Suggested fields:
+•	id
+•	user_id
+•	full_name
+•	profile_information
+•	current_counsellor_id
+•	daily_japa_target
+•	created_at
+•	updated_at
+Additional profile fields should be decided during the profile-form design.
+23.5 counsellor_assignments
+Purpose: Maintain Counsellor assignment history.
+Suggested fields:
+•	id
+•	devotee_id
+•	counsellor_id
+•	assigned_by
+•	start_date
+•	end_date
+•	is_current
+23.6 senior_devotee_assignments
+Purpose: Maintain Senior Devotee access assignments.
+Suggested fields:
+•	id
+•	senior_devotee_id
+•	devotee_id
+•	assigned_by
+•	assigned_at
+•	is_active
+23.7 daily_reports
+Purpose: Store the main daily report.
+Suggested fields:
+•	id
+•	devotee_id
+•	report_date
+•	wake_up_time
+•	sleep_time
+•	japa_total_rounds
+•	japa_total_duration
+•	japa_quality
+•	reading_completed
+•	book_name
+•	reading_duration
+•	seva_duration
+•	morning_worship_data
+•	satsanga_status
+•	lecture_duration
+•	lecture_topic
+•	lecture_speaker
+•	bhakti_time
+•	realization
+•	report_status
+•	submitted_at
+•	last_edited_at
+•	created_at
+•	updated_at
+A unique constraint should prevent duplicate main reports for the same Devotee and report date.
+23.8 japa_sessions
+Purpose: Store multiple Japa sessions.
+Suggested fields:
+•	id
+•	daily_report_id
+•	start_time
+•	end_time
+•	rounds_completed
+•	duration
+•	created_at
+The total Japa rounds and duration should be calculated from the relevant sessions or validated against the report summary.
+23.9 spiritual_activities
+Purpose: Store the master activity list.
+Suggested fields:
+•	id
+•	activity_name
+•	category
+•	description
+•	is_active
+•	created_by
+•	created_at
+Category values:
+•	DAILY
+•	OPTIONAL
+23.10 devotee_activity_records
+Purpose: Store activity completion against a Devotee and date.
+Suggested fields:
+•	id
+•	devotee_id
+•	activity_id
+•	report_date
+•	completion_status
+•	created_at
+•	updated_at
+23.11 regulative_principle_records
+Purpose: Store the four regulative principles for each report.
+Suggested fields:
+•	id
+•	daily_report_id
+•	principle_type
+•	adherence_status
+•	notes
+The four principles should be represented consistently using controlled values.
+23.12 requests
+Purpose: Store all user requests.
+Suggested fields:
+•	id
+•	requested_by
+•	request_type
+•	request_details
+•	request_status
+•	created_at
+•	updated_at
+•	completed_at
+23.13 request_approvals
+Purpose: Store approval steps for each request.
+Suggested fields:
+•	id
+•	request_id
+•	approver_id
+•	approval_role
+•	approval_status
+•	remarks
+•	approved_at
+This supports different approval sequences for different request types.
+23.14 notifications
+Purpose: Store website notifications.
+Suggested fields:
+•	id
+•	user_id
+•	notification_type
+•	title
+•	message
+•	is_read
+•	created_at
+•	read_at
+23.15 sadhana_scores
+Purpose: Store calculated progress summaries where appropriate.
+Suggested fields:
+•	id
+•	devotee_id
+•	period_type
+•	period_start
+•	period_end
+•	score
+•	calculation_version
+•	calculated_at
+The scoring formula must be finalized before using this table in production.
+23.16 system_settings
+Purpose: Store configurable system settings.
+Suggested fields:
+•	id
+•	setting_key
+•	setting_value
+•	updated_at
+Possible settings:
+•	Reporting timezone.
+•	Daily report deadline.
+•	Reminder time.
+•	Editing window.
+•	Backup schedule.
+•	Application configuration.
+23.17 export_jobs
+Purpose: Track Excel and PDF generation.
+Suggested fields:
+•	id
+•	export_type
+•	requested_by
+•	export_status
+•	file_reference
+•	created_at
+•	completed_at
+•	error_message
+23.18 backup_records
+Purpose: Track database backups.
+Suggested fields:
+•	id
+•	backup_type
+•	backup_location
+•	backup_status
+•	backup_size
+•	created_at
+•	verified_at
+23.19 Database Design Principles
+1.	Use normalized tables where appropriate.
+2.	Avoid storing repeated information unnecessarily.
+3.	Use foreign keys.
+4.	Use unique constraints for important business rules.
+5.	Index commonly searched fields.
+6.	Store timestamps consistently.
+7.	Avoid permanently deleting historical reports unless a defined retention policy allows it.
+8.	Maintain referential integrity.
+9.	Use database transactions for important operations.
+10.	Keep database credentials outside source code.
+________________________________________
+24. API REQUIREMENTS
+The backend should expose REST APIs.
+Suggested endpoint groups:
+24.1 Authentication
+POST   /api/auth/login
+POST   /api/auth/logout
+POST   /api/auth/refresh
+POST   /api/auth/forgot-password
+POST   /api/auth/reset-password
+GET    /api/auth/me
+24.2 User Management
+POST   /api/users
+GET    /api/users
+GET    /api/users/{user_id}
+PUT    /api/users/{user_id}
+PATCH  /api/users/{user_id}/status
+24.3 Devotee Profiles
+GET    /api/devotees/me
+PUT    /api/devotees/me
+GET    /api/devotees/{devotee_id}
+24.4 Daily Reports
+POST   /api/reports
+GET    /api/reports/me
+GET    /api/reports/{report_id}
+PUT    /api/reports/{report_id}
+GET    /api/reports/calendar
+GET    /api/reports/missing
+24.5 Japa
+POST   /api/japa/sessions
+GET    /api/japa/history
+GET    /api/japa/summary
+PUT    /api/japa/target
+24.6 Spiritual Activities
+GET    /api/activities
+POST   /api/activities
+PUT    /api/activities/{activity_id}
+POST   /api/activities/records
+GET    /api/activities/history
+Activity creation and management endpoints must be Admin-only.
+24.7 Counsellor
+GET    /api/counsellor/devotees
+GET    /api/counsellor/devotees/{devotee_id}/reports
+GET    /api/counsellor/devotees/{devotee_id}/progress
+POST   /api/counsellor/correction-requests
+24.8 Senior Devotee
+GET    /api/senior/devotees
+GET    /api/senior/devotees/{devotee_id}/reports
+GET    /api/senior/devotees/{devotee_id}/progress
+All these endpoints must enforce read-only access.
+24.9 Admin
+GET    /api/admin/dashboard
+GET    /api/admin/reports
+GET    /api/admin/users
+GET    /api/admin/requests
+POST   /api/admin/assign-counsellor
+POST   /api/admin/assign-senior
+24.10 Analytics
+GET    /api/analytics/daily
+GET    /api/analytics/weekly
+GET    /api/analytics/monthly
+GET    /api/analytics/devotee/{devotee_id}
+24.11 Export
+GET    /api/exports/pdf
+GET    /api/exports/excel
+GET    /api/exports/status/{job_id}
+24.12 Notifications
+GET    /api/notifications
+PATCH  /api/notifications/{notification_id}/read
+PATCH  /api/notifications/read-all
+These are proposed endpoint names. Final API contracts, request schemas and response schemas must be documented during implementation.
+________________________________________
+25. NON-FUNCTIONAL REQUIREMENTS
+Non-functional requirements describe how well the system should operate.
+25.1 Performance
+•	Common dashboard pages should load quickly under normal usage.
+•	Database queries should be optimized.
+•	Large report histories should use pagination.
+•	Analytics should avoid loading unnecessary records.
+•	Excel and PDF generation should not block normal report submission.
+•	Long-running export and backup tasks should run in the background where appropriate.
+25.2 Reliability
+•	A successful report submission must be saved in MySQL.
+•	Excel failure must not cause report loss.
+•	Backup failures should be detected.
+•	Application errors should be handled gracefully.
+•	Important operations should use database transactions.
+25.3 Availability
+The application should be accessible through the internet when the hosting provider and database are available.
+The selected free-tier hosting option may have limitations such as sleep periods, storage limits or usage restrictions. These limitations must be reviewed before deployment.
+25.4 Scalability
+The system should support additional devotees and Counsellors without requiring a complete redesign.
+Use pagination, database indexing and modular backend services.
+25.5 Maintainability
+•	Separate frontend and backend.
+•	Use modular code.
+•	Maintain clear naming conventions.
+•	Use environment configuration.
+•	Maintain database migrations.
+•	Write automated tests.
+•	Maintain a README file.
+•	Document setup and deployment.
+25.6 Usability
+•	Simple forms.
+•	Clear validation messages.
+•	Easy navigation.
+•	Understandable dashboards.
+•	Mobile-friendly layouts.
+•	Consistent interface design.
+25.7 Compatibility
+The application should work on current versions of commonly used desktop and mobile browsers.
+25.8 Data Integrity
+•	Prevent duplicate daily reports.
+•	Validate report dates.
+•	Validate numerical values.
+•	Prevent unauthorized modifications.
+•	Preserve relationships between users and reports.
+•	Use consistent time handling.
+25.9 Privacy
+Private devotee information must not be exposed through public URLs, frontend state, API responses or unauthorized exports.
+25.10 Accessibility
+The application should use readable text, keyboard-accessible controls, clear form labels and sufficient colour contrast.
+________________________________________
+26. BUSINESS RULES
+The following rules are important and must be consistently enforced.
+ID	Business Rule
+BR-001	One main daily report per Devotee per date.
+BR-002	A report can be edited within 24 hours after submission.
+BR-003	Late report submission is not allowed.
+BR-004	Missing reports must be identifiable.
+BR-005	Previous-day copying creates a draft, not an automatic submission.
+BR-006	Multiple Japa sessions can contribute to one daily total.
+BR-007	Each Devotee has an individual Japa target.
+BR-008	Only Admin can add spiritual activities.
+BR-009	Devotees can only view their own private reports.
+BR-010	Counsellors can only view assigned devotees.
+BR-011	Senior Devotees have assigned, read-only access.
+BR-012	Only Admin assigns Counsellors.
+BR-013	Counsellors cannot directly edit submitted reports.
+BR-014	Different request types can have different approval workflows.
+BR-015	The Master Excel File updates after successful report submission.
+BR-016	MySQL is the primary source of truth.
+BR-017	Daily automatic database backup is required.
+BR-018	An additional weekly backup is required.
+BR-019	PDF and Excel downloads are required.
+BR-020	Website notifications are the only initial notification channel.
+BR-021	Reminders are sent only when the report has not been submitted.
+BR-022	The initial application language is English.
+BR-023	The application must support responsive layouts and PWA.
+BR-024	Detailed Admin Activity Audit Logging is not required in the first version.
+BR-025	Historical reports should remain available after account closure, subject to the applicable retention policy.
+________________________________________
+27. IMPORTANT SYSTEM WORKFLOWS
+27.1 Daily Report Submission Workflow
+Devotee Login
+     |
+     v
+Open Dashboard
+     |
+     v
+Open Daily Sadhana Report
+     |
+     v
+Enter Daily Information
+     |
+     v
+Validate Required Fields
+     |
+     v
+Preview Report
+     |
+     v
+Submit Report
+     |
+     v
+Save Report in MySQL
+     |
+     v
+Confirm Submission
+     |
+     +----------------------+
+     |                      |
+     v                      v
+Update Dashboard       Trigger Excel Update
+                            |
+                            v
+                     Update Master Excel
+                            |
+                            v
+                     Record Export Status
+27.2 Missing Report Reminder Workflow
+Scheduled Reminder Check
+          |
+          v
+Check Devotee Report Status
+          |
+          v
+Is Report Submitted?
+       /       \
+     Yes        No
+      |          |
+      v          v
+ No Reminder   Check Reminder Time
+                 |
+                 v
+          Create Website Notification
+27.3 Counsellor Assignment Workflow
+Admin Login
+    |
+    v
+Open Counsellor Management
+    |
+    v
+Select Devotee
+    |
+    v
+Select Counsellor
+    |
+    v
+Validate Assignment
+    |
+    v
+Save Assignment
+    |
+    v
+Update Devotee's Current Counsellor
+    |
+    v
+Maintain Assignment History
+27.4 Counsellor Change Workflow
+Devotee
+   |
+   v
+Submit Change Request
+   |
+   v
+Admin Receives Notification
+   |
+   v
+Admin Reviews Request
+   |
+   v
+Approve or Reject
+   |
+   +-------------------+
+   |                   |
+ Approve              Reject
+   |                   |
+   v                   v
+Assign New          Update Request
+Counsellor          as Rejected
+   |
+   v
+Preserve Old Assignment History
+   |
+   v
+Notify Relevant Users
+27.5 Database Backup Workflow
+Scheduled Backup
+       |
+       v
+Connect to Database
+       |
+       v
+Create Backup
+       |
+       v
+Store Backup Securely
+       |
+       v
+Verify Backup
+       |
+       +-------------------+
+       |                   |
+    Success              Failure
+       |                   |
+       v                   v
+Update Backup         Record Failure
+Status                and Notify Admin
+________________________________________
+28. ACCEPTANCE CRITERIA
+The application should not be considered ready for production until the following conditions are satisfied.
+28.1 Authentication
+•	Users can log in with valid credentials.
+•	Invalid credentials are rejected.
+•	Passwords are stored securely.
+•	Password reset works.
+•	Account status restrictions are enforced.
+28.2 Role Management
+•	Admin can access permitted Admin functionality.
+•	Devotee can access only their own information.
+•	Counsellor can access only assigned devotees.
+•	Senior Devotee has read-only access to assigned devotees.
+•	Multiple roles work correctly for one account.
+28.3 Daily Reports
+•	A Devotee can submit a daily report.
+•	Duplicate reports are prevented.
+•	Required fields are validated.
+•	A report can be edited within 24 hours.
+•	Normal editing is blocked after 24 hours.
+•	Missing reports are displayed.
+•	Previous-day copy creates a draft.
+•	Report history is maintained.
+28.4 Japa
+•	Multiple Japa sessions can be entered.
+•	Total rounds are calculated correctly.
+•	Total duration is calculated correctly.
+•	Target completion percentage is correct.
+•	Japa history can be viewed.
+28.5 Counsellor
+•	Admin can assign a Counsellor.
+•	Counsellor can see assigned devotees.
+•	Counsellor cannot see unrelated devotees.
+•	Counsellor cannot directly edit reports.
+•	Counsellor change requests follow the approval process.
+28.6 Senior Devotee
+•	Assigned devotees are visible.
+•	Unassigned devotees are not visible.
+•	Editing and deletion are blocked.
+•	Admin-only actions are inaccessible.
+28.7 Analytics
+•	Daily scores are calculated correctly according to the approved formula.
+•	Weekly and monthly summaries are accurate.
+•	Progress comparisons use the same Devotee's previous periods.
+•	Filters return the correct records.
+28.8 Export
+•	PDF reports are generated correctly.
+•	Excel reports contain correct information.
+•	Master Excel updates after report submission.
+•	Failed Excel updates do not cause database data loss.
+•	Duplicate Excel rows are prevented.
+28.9 Backup
+•	Daily backup runs automatically.
+•	Weekly backup runs automatically.
+•	Backup failures are detected.
+•	A backup can be restored successfully.
+•	Restored data is verified.
+28.10 Mobile and PWA
+•	Forms work on mobile.
+•	Dashboards are responsive.
+•	Navigation works on mobile.
+•	PWA installation works on supported browsers.
+•	Private data is not exposed through unsafe caching.
+________________________________________
+29. TESTING STRATEGY
+The application should be tested at multiple levels.
+29.1 Unit Testing
+Test individual functions:
+•	Japa calculations.
+•	Score calculations.
+•	Report validation.
+•	Permission checks.
+•	Time calculations.
+•	Excel row generation.
+•	Notification conditions.
+29.2 API Testing
+Test:
+•	Login.
+•	User creation.
+•	Report submission.
+•	Report editing.
+•	Counsellor assignment.
+•	Request approval.
+•	Analytics.
+•	Export.
+•	Notifications.
+29.3 Integration Testing
+Test complete interactions between:
+•	React and FastAPI.
+•	FastAPI and MySQL.
+•	MySQL and Excel export.
+•	Backup service and database.
+•	Notifications and report submission.
+29.4 Security Testing
+Test whether:
+•	Devotees can access other devotees' reports.
+•	Counsellors can access unassigned devotees.
+•	Senior Devotees can edit data.
+•	Users can access Admin endpoints.
+•	Expired or invalid sessions are rejected.
+•	API requests cannot bypass role restrictions.
+29.5 User Acceptance Testing
+Test the application using realistic scenarios for each role.
+The project owner should verify the complete flow before the application is released.
+________________________________________
+30. DEVELOPMENT PHASES
+The project should be developed in the following order.
+Phase 1 — Project Setup
+Tasks:
+1.	Create the project directory.
+2.	Set up the React frontend.
+3.	Set up the FastAPI backend.
+4.	Configure MySQL.
+5.	Configure environment variables.
+6.	Create the initial backend structure.
+7.	Establish frontend-backend communication.
+8.	Set up Git version control.
+Completion condition: Frontend, backend and database can communicate successfully.
+Phase 2 — Database and Authentication
+Tasks:
+1.	Create database.
+2.	Create users table.
+3.	Create roles table.
+4.	Create user_roles table.
+5.	Implement login.
+6.	Implement password hashing.
+7.	Implement authentication.
+8.	Implement protected APIs.
+9.	Implement role-based authorization.
+Completion condition: All four roles can authenticate and receive appropriate access.
+Phase 3 — User and Profile Management
+Tasks:
+1.	Admin dashboard.
+2.	Create Devotee.
+3.	Invite Devotee.
+4.	Complete profile.
+5.	Manage accounts.
+6.	Assign roles.
+7.	Implement account statuses.
+8.	Implement Counsellor assignment.
+9.	Implement Senior Devotee assignment.
+Completion condition: Admin can create and manage users.
+Phase 4 — Daily Sadhana Report
+Tasks:
+1.	Design report form.
+2.	Implement report validation.
+3.	Save report in MySQL.
+4.	Implement report preview.
+5.	Implement submission confirmation.
+6.	Implement 24-hour editing.
+7.	Implement missing reports.
+8.	Implement previous-day copy.
+9.	Implement report history.
+Completion condition: Devotees can submit and view daily reports correctly.
+Phase 5 — Japa Tracking
+Tasks:
+1.	Create Japa session table.
+2.	Implement multiple sessions.
+3.	Implement daily target.
+4.	Calculate total rounds.
+5.	Calculate duration.
+6.	Calculate completion percentage.
+7.	Implement Japa history.
+Completion condition: Japa tracking works independently and connects to the daily report.
+Phase 6 — Spiritual Activities
+Tasks:
+1.	Create activity management.
+2.	Add Daily and Optional categories.
+3.	Allow Admin to manage activities.
+4.	Allow Devotees to mark completion.
+5.	Save activity history.
+Completion condition: Activity completion is saved against the correct Devotee and date.
+Phase 7 — Counsellor and Senior Dashboards
+Tasks:
+1.	Create Counsellor dashboard.
+2.	Display assigned devotees.
+3.	Display report history.
+4.	Display progress.
+5.	Implement correction requests.
+6.	Implement Counsellor change requests.
+7.	Create Senior Devotee dashboard.
+8.	Enforce read-only access.
+Completion condition: Assigned-user permissions work correctly.
+Phase 8 — Admin and Approval Management
+Tasks:
+1.	Create Admin dashboard.
+2.	Implement user management.
+3.	Implement request management.
+4.	Implement request-specific approvals.
+5.	Implement account management actions.
+6.	Implement assignment history.
+Completion condition: Admin can manage the complete system.
+Phase 9 — Analytics
+Tasks:
+1.	Finalize score calculation formula.
+2.	Implement daily score.
+3.	Implement weekly score.
+4.	Implement monthly score.
+5.	Create charts.
+6.	Implement filters.
+7.	Implement progress comparisons.
+8.	Implement Admin and Counsellor analytics.
+Completion condition: All analytics match the approved calculation rules.
+Phase 10 — PDF and Excel
+Tasks:
+1.	Design PDF templates.
+2.	Generate PDF reports.
+3.	Design Master Excel structure.
+4.	Implement automatic Excel update.
+5.	Implement export status.
+6.	Implement retry handling.
+7.	Implement Excel rebuilding from MySQL.
+Completion condition: Reports can be exported accurately.
+Phase 11 — Backup and Notifications
+Tasks:
+1.	Implement website notifications.
+2.	Implement missing-report reminder.
+3.	Implement daily backup.
+4.	Implement weekly backup.
+5.	Implement backup status.
+6.	Implement restore process.
+7.	Test restoration.
+Completion condition: Notifications and backups work reliably.
+Phase 12 — UI/UX and PWA
+Tasks:
+1.	Apply modern spiritual theme.
+2.	Complete dashboard layouts.
+3.	Make forms responsive.
+4.	Implement mobile navigation.
+5.	Add PWA configuration.
+6.	Test installation.
+7.	Test on different screen sizes.
+Completion condition: The application works on desktop and mobile.
+Phase 13 — Testing and Deployment
+Tasks:
+1.	Run unit tests.
+2.	Run API tests.
+3.	Run integration tests.
+4.	Run security tests.
+5.	Perform user acceptance testing.
+6.	Configure production database.
+7.	Configure environment variables.
+8.	Deploy frontend.
+9.	Deploy backend.
+10.	Configure HTTPS.
+11.	Configure backups.
+12.	Test production workflows.
+Completion condition: The production application is accessible and its essential features work correctly.
+________________________________________
+31. PROJECT CONFIGURATION AND DEVELOPMENT RECORD
+This section is especially important when development is paused and resumed later.
+31.1 Project Identity
+Project Name: Sadhana Report Management System
+Purpose: Centralized Sadhana report management for ISKCON devotees.
+Backend: Python FastAPI.
+Database: MySQL.
+Frontend: React — proposed.
+Platform: Responsive Web Application + PWA.
+Language: English.
+31.2 Development Rules
+1.	Follow this SRS as the primary requirements reference.
+2.	Do not randomly change the technology stack.
+3.	Do not create unnecessary modules outside the agreed scope.
+4.	Complete and test one development phase before moving to the next.
+5.	Keep the database structure documented.
+6.	Keep API endpoints documented.
+7.	Use database migrations for schema changes.
+8.	Do not put passwords or secrets inside source code.
+9.	Do not delete working code without understanding its dependencies.
+10.	Do not replace existing project files blindly.
+11.	Test existing functionality after every major change.
+12.	Update the development record after completing each phase.
+13.	Record errors, solutions and pending tasks.
+14.	Keep a working Git commit before major changes.
+31.3 Recommended Project Documentation Files
+Maintain these files in the project's root directory.
+Sadhana-Report-Management-System/
+│
+├── README.md
+├── SRS.md
+├── DEVELOPMENT_PROGRESS.md
+├── DATABASE_DESIGN.md
+├── API_DOCUMENTATION.md
+├── ARCHITECTURE.md
+├── BUSINESS_RULES.md
+├── TESTING_CHECKLIST.md
+├── DEPLOYMENT_GUIDE.md
+├── CHANGELOG.md
+│
+├── frontend/
+│
+├── backend/
+│
+├── database/
+│
+├── documentation/
+│
+└── backups/
+Purpose of each document
+File	Purpose
+README.md	Project introduction and setup instructions
+SRS.md	Complete requirements
+DEVELOPMENT_PROGRESS.md	Completed and pending work
+DATABASE_DESIGN.md	Database tables and relationships
+API_DOCUMENTATION.md	API endpoints and request/response details
+ARCHITECTURE.md	Technical architecture
+BUSINESS_RULES.md	Important application rules
+TESTING_CHECKLIST.md	Testing status
+DEPLOYMENT_GUIDE.md	Hosting and deployment instructions
+CHANGELOG.md	Changes made to the project
+31.4 Development Progress Template
+Update this file whenever a development phase is completed.
+# Development Progress
+
+## Current Phase:
+Phase number and name
+
+## Last Working Date:
+YYYY-MM-DD
+
+## Completed:
+- Task 1
+- Task 2
+
+## Currently Working On:
+- Current task
+
+## Pending:
+- Next task
+- Following task
+
+## Files Created:
+- File paths
+
+## Files Modified:
+- File paths
+
+## Database Changes:
+- Tables or columns added/modified
+
+## API Changes:
+- Endpoints added/modified
+
+## Errors Encountered:
+- Error and cause
+
+## Solutions Applied:
+- Solution
+
+## Current Application Status:
+- Working / Partially Working / Not Working
+
+## Next Step:
+The exact next task to continue.
+________________________________________
+32. HOW TO RESUME THIS PROJECT AFTER A BREAK
+If development stops for a few days, weeks or months, follow this procedure.
+Step 1 — Open the project folder
+Open the existing Sadhana Report Management System project folder.
+Do not create a new project unless the original project is genuinely unavailable.
+Step 2 — Read the main documents
+Read these files in this order:
+1.	README.md
+2.	SRS.md
+3.	DEVELOPMENT_PROGRESS.md
+4.	DATABASE_DESIGN.md
+5.	API_DOCUMENTATION.md
+6.	CHANGELOG.md
+Step 3 — Check the current project state
+Check:
+•	Frontend structure.
+•	Backend structure.
+•	Database connection.
+•	Environment configuration.
+•	Installed dependencies.
+•	Current Git branch.
+•	Last working commit.
+•	Existing errors.
+•	Last completed development phase.
+Step 4 — Run the existing application
+Start the backend and frontend using the project's existing setup instructions.
+Verify whether the database connection works.
+Do not immediately upgrade dependencies or change versions just because a newer version is available.
+Step 5 — Identify the last completed task
+Use DEVELOPMENT_PROGRESS.md to identify:
+•	What is completed.
+•	What is incomplete.
+•	What was being developed.
+•	What the next task is.
+Step 6 — Continue from the exact next task
+Do not restart completed modules unnecessarily.
+Do not change the database schema without checking existing relationships.
+Do not overwrite working code without inspecting it first.
+Step 7 — Update documentation
+After completing the work:
+•	Update DEVELOPMENT_PROGRESS.md.
+•	Update CHANGELOG.md.
+•	Update API_DOCUMENTATION.md if APIs changed.
+•	Update DATABASE_DESIGN.md if tables changed.
+•	Run relevant tests.
+•	Commit working changes to Git.
+________________________________________
+33. PROJECT RESUME PROMPT
+When returning to this project after a break, the following prompt can be pasted into ChatGPT along with the project files or relevant code.
+I am continuing my existing project:
+
+Sadhana Report Management System.
+
+Read the attached SRS.md, README.md,
+DEVELOPMENT_PROGRESS.md, DATABASE_DESIGN.md,
+API_DOCUMENTATION.md and the relevant source files.
+
+Your first responsibility is to understand the existing
+project before making any changes.
+
+Follow these rules:
+
+1. Do not restart the project.
+2. Do not replace the existing technology stack.
+3. Do not assume that previously completed features are missing.
+4. Inspect the existing frontend, backend and database.
+5. Identify the last completed development phase.
+6. Identify the current working feature.
+7. Identify pending tasks and existing errors.
+8. Check whether the application currently runs.
+9. Compare the existing implementation with the SRS.
+10. Explain the exact point from which development should continue.
+11. Do not delete or overwrite working files unnecessarily.
+12. Give step-by-step instructions using the existing project.
+13. Keep the implementation beginner-friendly and explain
+    important code changes.
+14. Test the existing functionality after modifications.
+15. Update DEVELOPMENT_PROGRESS.md after completing the work.
+
+Continue from the last unfinished task, not from the beginning.
+
+The SRS is the main requirements reference.
+If the implementation differs from the SRS, identify the difference
+before changing anything.
+________________________________________
+34. REQUIREMENTS STILL TO BE FINALIZED BEFORE THEIR IMPLEMENTATION
+The main requirements have been collected. Some technical details still need precise decisions during the design phase.
+These are not reasons to restart requirement discovery. They are design tasks that can be completed when the relevant module is developed.
+ID	Item	What must be finalized
+TBD-01	Daily reporting deadline	Exact cutoff time and timezone
+TBD-02	Sadhana Score	Activities, weights and calculation formula
+TBD-03	Morning Worship	Exact fields included in the combined section
+TBD-04	Regulative Principles	Exact input values and notes behaviour
+TBD-05	Bhakti Time	Which activities count and how double-counting is prevented
+TBD-06	Profile Fields	Final profile form fields
+TBD-07	Approval Matrix	Exact approver for every request type
+TBD-08	Excel Structure	Final sheet names and column definitions
+TBD-09	Backup Retention	How long daily and weekly backups are retained
+TBD-10	Hosting	Actual provider, storage limits and deployment configuration
+TBD-11	Notification Timing	Exact reminder time
+TBD-12	Data Retention	Applicable retention and account closure policy
+These details should be finalized before implementing the corresponding features.
+________________________________________
+35. FINAL PROJECT REQUIREMENTS SUMMARY
+Category	Final Decision
+Project	Sadhana Report Management System
+Primary Purpose	Daily Sadhana tracking and management
+Roles	Admin, Devotee, Counsellor, Senior Devotee
+First Admin	Project owner
+Admin + Devotee	Supported in one account
+Personal Counsellor	Separate Counsellor
+Backend	Python FastAPI
+Database	MySQL
+Frontend	React — proposed
+Language	English
+Theme	Modern + Spiritual
+Platform	Responsive Website + PWA
+Daily Report	One main report per day
+Editing	Within 24 hours
+Late Submission	Not allowed
+Japa	Multiple sessions and individual targets
+Spiritual Activities	Daily + Optional
+Counsellor Assignment	Admin controlled
+Senior Devotee	Assigned devotees, read-only
+Analytics	Daily, Weekly, Monthly
+Progress Comparison	Own previous weekly/monthly progress
+Downloads	PDF + Excel
+Excel	One Master Excel File
+Excel Update	After each successful report submission
+Database Backup	Daily + additional weekly
+Restore	Full restoration from backup
+Privacy	Devotees can see only their own information
+Audit Log	No detailed Admin Activity Audit Log
+Notifications	Website only
+Reminder	Only if report is not submitted
+Hosting	Free tier initially, free subdomain preferred
+Future Expansion	Multiple Counsellors and larger devotee population
+________________________________________
+36. FINAL PROJECT VISION
+The Sadhana Report Management System should become a reliable, secure and easy-to-use platform for managing the daily spiritual practices of ISKCON devotees.
+It should help devotees maintain their daily Sadhana records, understand their own progress and maintain consistency.
+It should help Counsellors guide assigned devotees through accurate historical information and progress summaries.
+It should help Senior Devotees monitor assigned devotees within controlled permissions.
+It should help Administrators manage accounts, reports, requests, assignments, analytics and backups from one centralized platform.
+The system should prioritize:
+•	Simplicity for Devotees.
+•	Useful information for Counsellors.
+•	Restricted access for Senior Devotees.
+•	Complete management facilities for Admin.
+•	Privacy and security.
+•	Accurate historical records.
+•	Reliable backups.
+•	Maintainable code.
+•	Future scalability.
+The goal is not merely to build a form for submitting daily reports. The goal is to build a complete Sadhana management platform that can be maintained and expanded over time.
+________________________________________
+END OF SOFTWARE REQUIREMENTS SPECIFICATION — VERSION 1.0
+Document Status: Requirements Baseline Complete.
+Next Development Activity: Technical Design → Database Schema → Project Setup → Authentication and Role Management.
+
+

@@ -1,0 +1,26 @@
+I am continuing my Sadhana Report Management System project.
+
+Before writing or changing any code:
+
+1. Read SOFTWARE REQUIREMENTS SPECIFICATION.md.
+2. Read DEVELOPMENT_PROGRESS.md.
+3. Read TASK_TRACKER.md.
+4. Read PROJECT_HANDOVER.md.
+5. Inspect the existing project folder and source code.
+6. Check which features are completed, incomplete and currently working.
+
+Continue from the exact point where I stopped last time.
+
+IMPORTANT:
+- Do not restart the project.
+- Do not recreate completed features.
+- Do not change the technology stack without discussing it.
+- Do not overwrite working code unnecessarily.
+- Follow the original SRS requirements.
+- Give me beginner-friendly, step-by-step instructions.
+- Use Windows CMD commands.
+- Work in small, testable stages.
+
+After completing today's work, update all progress and handover documentation so I can continue after several days without losing track.
+
+First, tell me exactly where the project stopped and what the next task is.
