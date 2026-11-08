@@ -1,0 +1,150 @@
+NityaSadhana — Complete next development roadmap
+Development progress
+1. Backend foundation
+   Previously completed
+   FastAPI, Uvicorn, MySQL and seven SQLAlchemy models.
+2. Backend inspection
+   Next
+   Inspect existing files and database model mappings.
+3. Authentication
+   
+   Registration, login, password hashing, JWT and logout.
+4. User profiles
+   
+   Create, view and update devotee profiles.
+5. Daily Sadhana
+   
+   Japa, book reading, hearing, seva and reflections.
+6. Report management
+   
+   Submit reports, edit within 24 hours, drafts and history.
+7. React integration
+   
+   Connect frontend pages with backend APIs.
+8. Dashboard
+   
+   Personal progress, daily summaries and admin dashboard.
+9. Testing and security
+   
+   Validation, permissions, user isolation and API testing.
+10. Public deployment
+    
+    Host frontend, backend and database online.
+11. GitHub documentation
+    
+    README, development progress, task tracker and commits.
+
+Stage 1 — Collect all existing project information
+Open a second CMD window.
+
+Run this complete command:
+cd C:\Users\DESKTOP\Desktop\NityaSadhana
+
+(
+echo ================================
+echo NITYASADHANA PROJECT INSPECTION
+echo ================================
+echo.
+echo ===== BACKEND STRUCTURE =====
+tree backend /F /A
+echo.
+echo ===== FRONTEND STRUCTURE =====
+tree frontend\src /F /A
+echo.
+echo ===== MAIN.PY =====
+type backend\main.py
+echo.
+echo ===== DATABASE.PY =====
+type backend\database.py
+echo.
+echo ===== MODELS.PY =====
+type backend\app\models\models.py
+echo.
+echo ===== MODELS INIT =====
+type backend\app\models\__init__.py
+echo.
+echo ===== REQUIREMENTS =====
+type backend\requirements.txt
+echo.
+echo ===== GIT STATUS =====
+git status
+) > NITYASADHANA_INSPECTION.txt 2>&1
+
+notepad NITYASADHANA_INSPECTION.txt
+
+
+If requirements.txt is missing, CMD may display an error; that is okay.
+
+Before sharing: Check that no passwords, database URLs, JWT secrets or other credentials are included. Redact any such values.
+Stage 2 — Backend implementation
+After inspecting the files, we will implement:
+Module	Functionality
+Authentication	Register, login, JWT
+Users	Profile management
+Sadhana	Daily activity records
+Reports	Submit, edit, view
+Dashboard	Progress and statistics
+Admin	User and report management
+
+Stage 3 — Frontend integration
+We will connect your React application with FastAPI.
+- Login and registration pages.
+- User dashboard.
+- Daily Sadhana submission form.
+- Report history.
+- Profile management.
+- Admin dashboard.
+- API error and loading handling.
+Stage 4 — Testing
+We will test:
+- New user registration.
+- Login and authentication.
+- Invalid passwords.
+- Duplicate reports.
+- 24-hour editing restriction.
+- Two different users' data isolation.
+- Dashboard calculations.
+- Frontend and backend integration.
+Stage 5 — Public website deployment
+Final architecture:
+             PUBLIC USERS
+                   |
+             React Website
+                   |
+             Hosted Frontend
+                   |
+              FastAPI API
+                   |
+           Authentication
+                   |
+            Hosted MySQL
+                   |
+           Individual Records
+
+
+Your personal computer will not need to remain switched on after deployment.
+Stage 6 — GitHub and documentation
+We will maintain:
+NityaSadhana/
+│
+├── backend/
+├── frontend/
+├── docs/
+│
+├── README.md
+├── DEVELOPMENT_PROGRESS.md
+├── TASK_TRACKER.md
+└── .gitignore
+
+
+We will also commit each completed milestone to GitHub.
+
+Your immediate task
+Run this now
+Execute the Stage 1 command and open NITYASADHANA_INSPECTION.txt.
+
+Send me its contents.
+
+Important: I will use your actual seven database models and existing React components to generate the next implementation code. I don't want to give you guessed code that damages your working project.
+
+We will continue with complete batches of Windows CMD commands and code, rather than stopping after every individual command.
