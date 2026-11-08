@@ -1,0 +1,172 @@
+NityaSadhana – Daily Development Report
+Completed
+Today's verified work
+Pending
+Upcoming development
+
+1. Previously completed work
+These were already completed before today's MySQL session.
+Task	Status
+React + Vite frontend setup	Done
+FastAPI backend setup	Done
+Python virtual environment	Done
+Required Python dependencies	Done
+Backend application structure	Done
+FastAPI application configuration	Done
+CORS configuration	Done
+/ endpoint	Done
+/api/health endpoint	Done
+
+2. Work completed today – 8 November
+Verified from your CMD outputs
+No.	Task	Result
+1	MySQL Server installation verified	Done
+2	MySQL 8.0.41 verified	Done
+3	MySQL80 Windows service started	Done
+4	Root password configured	Done
+5	Root login tested	Done
+6	MySQL port checked (3306)	Done
+7	MySQL user authentication checked	Done
+8	nityasadhana database created	Done
+9	Database selected using USE	Done
+10	Existing databases inspected	Done
+11	Tables checked	Done – currently empty
+12	Public multi-user architecture discussed	Done – design decision still to be finalized
+
+Important achievement: Your database now exists locally:
+nityasadhana
+
+
+We have not yet connected it to FastAPI.
+3. Remaining development tasks
+Here is our development roadmap in the correct order.
+Phase 1 – Backend and database integration
+Next working session
+No.	Task	Status
+1	Inspect existing backend files	Pending
+2	Check installed SQLAlchemy	Pending
+3	Check installed PyMySQL	Pending
+4	Configure .env	Pending
+5	Secure .gitignore	Pending
+6	Create database connection file	Pending
+7	Connect FastAPI to MySQL	Pending
+8	Create /api/db-health endpoint	Pending
+9	Test database connection	Pending
+
+Phase 2 – Database design
+No.	Task	Status
+1	Design user table	Pending
+2	Design devotee profile table	Pending
+3	Design daily sadhana records	Pending
+4	Design japa tracking	Pending
+5	Design book reading records	Pending
+6	Design seva records	Pending
+7	Design admin and roles	Pending
+8	Create SQLAlchemy models	Pending
+9	Create database tables	Pending
+
+Phase 3 – Authentication and APIs
+- User registration.
+- User login and logout.
+- Password hashing.
+- Secure authentication.
+- Individual user dashboards.
+- Create, read, update and delete sadhana records.
+- Admin dashboard and permissions.
+- Ensure users cannot access another user's private records.
+Phase 4 – Frontend development
+- Connect React to FastAPI.
+- Registration and login pages.
+- User dashboard.
+- Daily sadhana entry form.
+- Japa tracking interface.
+- Reading and seva tracking.
+- Reports and progress charts.
+- Admin dashboard.
+Phase 5 – Testing and deployment
+- Backend API testing.
+- Frontend testing.
+- Database testing.
+- Authentication and security testing.
+- GitHub repository updates.
+- Cloud MySQL deployment.
+- FastAPI cloud hosting.
+- React website hosting.
+- Domain connection.
+- Public launch.
+4. Final architecture we are targeting
+Public users
+Anyone can register from anywhere
+
+React + Vite
+Public website
+
+FastAPI
+Application logic and authentication
+
+Cloud MySQL
+Shared database with private user records
+Your personal computer will not need to stay switched on after cloud deployment.
+5. What we will do in our next session
+Our immediate next task is:
+Task 1 – Backend inspection
+Next
+
+We will inspect your existing backend before changing any files.
+
+Execute in CMD:
+cd /d C:\Users\DESKTOP\Desktop\NityaSadhana\backend
+
+tree /F
+
+type requirements.txt
+
+if exist .env (echo ENV EXISTS) else (echo ENV NOT FOUND)
+
+if exist .gitignore (type .gitignore) else (echo GITIGNORE NOT FOUND)
+
+venv\Scripts\activate
+
+pip show sqlalchemy
+
+pip show pymysql
+
+pip show python-dotenv
+
+
+After that: We will configure the database connection without deleting or recreating main.py.
+
+6. Documents to maintain
+At the end of our next development session, we should update these three files:
+1. DEVELOPMENT_PROGRESS.md – daily completed work.
+2. TASK_TRACKER.md – task-by-task completion status.
+3. PROJECT_HANDOVER.md – current setup, architecture and next steps.
+Also, keep the original Software Requirements Specification as our reference for the features.
+
+7. Today's final status
+NityaSadhana
+DEVELOPMENT STATUS · 8 NOVEMBER 2026
+
+MySQL setup
+Completed
+
+Local database creation
+Completed
+
+FastAPI–MySQL integration
+Pending
+
+Multi-user authentication
+Pending
+
+Cloud deployment
+Pending
+
+
+Next milestone: Successful FastAPI connection to MySQL.
+
+One important point: we still need to finalize whether the public system will support individual devotees only or both individual devotees and temple administrators.
+
+Our next session can start directly with backend inspection and database connection, then proceed to the database models. We can also maintain a daily development check-in so no completed work gets repeated.
+
+Hare Krishna! 🙏
