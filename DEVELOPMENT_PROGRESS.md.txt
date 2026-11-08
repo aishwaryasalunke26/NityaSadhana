@@ -1,0 +1,103 @@
+# NityaSadhana – Development Progress Log
+
+**Date:** 7 November 2026  
+**Project:** ISKCON Sadhana Report Management System
+
+## 1. Project Technology
+
+- Frontend: React + Vite
+- Backend: Python + FastAPI
+- Database: MySQL
+- ORM: SQLAlchemy
+- Database Driver: PyMySQL
+- API Architecture: REST API
+- Frontend Port: 5173
+- Backend Port: 8000
+
+## 2. Work Completed – 7 November 2026
+
+### Frontend
+- Continued development of the React frontend.
+- Worked on the Daily Sadhana Report form.
+- Maintained devotional light-theme design.
+- Included Japa, Reading, Hearing (Shravanam), Seva and Sleeping Time sections.
+
+### Backend
+- Created the backend directory.
+- Created Python virtual environment.
+- Activated virtual environment.
+- Installed FastAPI, Uvicorn, SQLAlchemy, PyMySQL and python-dotenv.
+- Generated requirements.txt.
+- Created app directory.
+- Created routers, models, schemas and database directories.
+- Created Python initialization files.
+- Created app/main.py.
+- Configured FastAPI application.
+- Configured CORS for React frontend.
+- Added GET / endpoint.
+- Added GET /api/health endpoint.
+- Started FastAPI using Uvicorn.
+- Reached backend API testing stage.
+
+### Git and GitHub
+- Existing Git repository was previously confirmed on main.
+- Previous repository status was clean and synchronized with origin/main.
+- Today's new changes still need a fresh Git status check, commit and push.
+
+## 3. Current Backend Structure
+
+backend/
+- venv/
+- requirements.txt
+- app/
+  - __init__.py
+  - main.py
+  - routers/
+  - models/
+  - schemas/
+  - database/
+
+## 4. Pending Work
+
+- Verify MySQL Server installation and availability.
+- Create nityasadhana database.
+- Configure .env and .gitignore.
+- Create database connection.
+- Test MySQL connectivity.
+- Create SQLAlchemy models.
+- Create database tables.
+- Develop registration and login APIs.
+- Develop Daily Sadhana Report APIs.
+- Implement draft saving.
+- Implement report submission.
+- Implement duplicate report prevention.
+- Implement 24-hour editing restriction.
+- Connect React frontend to FastAPI.
+- Test all modules.
+- Update GitHub.
+
+## 5. Next Session Starting Point
+
+**Continue from: MySQL database connection.**
+
+Do not repeat:
+- Backend folder creation.
+- Virtual environment creation.
+- Python package installation.
+- Backend app folder creation.
+- Initialization file creation.
+- Basic main.py creation.
+
+First inspect the existing files and Git status.
+
+## 6. Development Rule
+
+After each development session:
+1. Update DEVELOPMENT_PROGRESS.md.
+2. Update TASK_TRACKER.md.
+3. Test newly implemented functionality.
+4. Check Git status.
+5. Commit and push verified changes to GitHub.
+6. Record the next starting point.
+
+**Last updated:** 7 November 2026
