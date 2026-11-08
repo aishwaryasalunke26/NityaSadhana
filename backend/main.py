@@ -1,10 +1,16 @@
 
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import text
+from sqlalchemy import inspect, text
 from sqlalchemy.exc import SQLAlchemyError
 
-from database import engine, DB_NAME
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
+from database import engine
+
+from app.routers.auth import router as auth_router
+from app.routers.profile import router as profile_router
+from app.routers.japa import router as japa_router
+
 
 app = FastAPI(
     title="NityaSadhana API",
@@ -12,6 +18,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
+
+# Frontend connection
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -22,6 +30,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Authentication routes
+app.include_router(auth_router)
+
+# Devotee profile routes
+app.include_router(profile_router)
+
+# Japa tracking routes
+app.include_router(japa_router)
 
 
 @app.get("/")
@@ -58,4 +76,39 @@ def database_health_check():
         raise HTTPException(
             status_code=503,
             detail="MySQL connection failed. Check database configuration."
+        )
+
+
+@app.get("/api/models-health")
+def models_health():
+    try:
+        tables = inspect(engine).get_table_names()
+
+        expected_tables = [
+            "users",
+            "devotee_profiles",
+            "japa_records",
+            "book_reading",
+            "hearing_records",
+            "seva_records",
+            "daily_reports",
+        ]
+
+        found_tables = [
+            table for table in expected_tables
+            if table in tables
+        ]
+
+        return {
+            "status": "success" if len(found_tables) == 7 else "incomplete",
+            "models_registered": 7,
+            "tables_found": len(found_tables),
+            "tables": found_tables,
+            "message": "NityaSadhana database models verification completed"
+        }
+
+    except Exception:
+        raise HTTPException(
+            status_code=503,
+            detail="Database model verification failed"
         )

@@ -1,0 +1,578 @@
+==========================================
+NITYASADHANA BACKEND REVIEW
+==========================================
+
+===== ROOT MAIN.PY =====
+from sqlalchemy import inspect
+from database import engine
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+from fastapi import HTTPException
+from database import engine, DB_NAME
+
+app = FastAPI(
+    title="NityaSadhana API",
+    description="ISKCON Sadhana Report Management System",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/")
+def home():
+    return {
+        "message": "Welcome to NityaSadhana Backend",
+        "status": "Running"
+    }
+
+
+@app.get("/api/health")
+def health_check():
+    return {
+        "status": "success",
+        "message": "NityaSadhana API is working properly"
+    }
+
+
+@app.get("/api/db-health")
+def database_health_check():
+    try:
+        with engine.connect() as connection:
+            database_name = connection.execute(
+                text("SELECT DATABASE()")
+            ).scalar()
+
+        return {
+            "status": "connected",
+            "database": database_name,
+            "message": "MySQL connection successful"
+        }
+
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=503,
+            detail="MySQL connection failed. Check database configuration."
+        )
+
+@app.get("/api/models-health")
+def models_health():
+    try:
+        tables = inspect(engine).get_table_names()
+
+        expected_tables = [
+            "users",
+            "devotee_profiles",
+            "japa_records",
+            "book_reading",
+            "hearing_records",
+            "seva_records",
+            "daily_reports",
+        ]
+
+        found_tables = [
+            table for table in expected_tables
+            if table in tables
+        ]
+
+        return {
+            "status": "success" if len(found_tables) == 7 else "incomplete",
+            "models_registered": 7,
+            "tables_found": len(found_tables),
+            "tables": found_tables,
+            "message": "NityaSadhana database models verification completed"
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail="Database model verification failed"
+        )
+===== APP MAIN.PY =====
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(
+    title="NityaSadhana API",
+    description="ISKCON Sadhana Report Management System",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def home():
+    return {
+        "message": "Welcome to NityaSadhana Backend",
+        "status": "Running"
+    }
+
+@app.get("/api/health")
+def health_check():
+    return {
+        "status": "success",
+        "message": "NityaSadhana API is working properly"
+    }
+
+===== DATABASE.PY =====
+import os
+from pathlib import Path
+
+from dotenv import load_dotenv
+from sqlalchemy import URL, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
+
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = int(os.getenv("DB_PORT", "3306"))
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+
+if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
+    raise ValueError("Database configuration is incomplete. Check backend/.env")
+
+DATABASE_URL = URL.create(
+    drivername="mysql+pymysql",
+    username=DB_USER,
+    password=DB_PASSWORD,
+    host=DB_HOST,
+    port=DB_PORT,
+    database=DB_NAME,
+)
+
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,
+)
+
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+)
+
+Base = declarative_base()
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+===== MODELS.PY =====
+from sqlalchemy import (
+    Column,
+    String,
+    Text,
+    Date,
+    TIMESTAMP,
+    ForeignKey,
+    UniqueConstraint,
+    Index,
+    text,
+    func,
+    FetchedValue,
+)
+from sqlalchemy.dialects.mysql import BIGINT, INTEGER, ENUM
+
+from database import Base
+
+
+# 1. USERS TABLE
+class User(Base):
+    __tablename__ = "users"
+
+    user_id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    email = Column(String(255), nullable=False, unique=True)
+    password_hash = Column(String(255), nullable=False)
+
+    role = Column(
+        ENUM("devotee", "admin"),
+        server_default=text("'devotee'")
+    )
+
+    account_status = Column(
+        ENUM("active", "inactive"),
+        server_default=text("'active'")
+    )
+
+    created_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP"),
+        server_onupdate=FetchedValue()
+    )
+
+
+# 2. DEVOTEE PROFILES TABLE
+class DevoteeProfile(Base):
+    __tablename__ = "devotee_profiles"
+
+    profile_id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+
+    user_id = Column(
+        BIGINT(unsigned=True),
+        ForeignKey("users.user_id", name="fk_profile_user", ondelete="CASCADE"),
+        nullable=False,
+        unique=True
+    )
+
+    full_name = Column(String(150), nullable=False)
+    initiated_name = Column(String(150), nullable=True)
+    phone = Column(String(20), nullable=True)
+    city = Column(String(100), nullable=True)
+
+    created_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP"),
+        server_onupdate=FetchedValue()
+    )
+
+
+# 3. JAPA RECORDS TABLE
+class JapaRecord(Base):
+    __tablename__ = "japa_records"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "record_date",
+            name="unique_user_japa_date"
+        ),
+    )
+
+    japa_id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+
+    user_id = Column(
+        BIGINT(unsigned=True),
+        ForeignKey("users.user_id", name="fk_japa_user", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    record_date = Column(Date, nullable=False)
+
+    rounds_completed = Column(
+        INTEGER(unsigned=True),
+        nullable=False,
+        server_default=text("0")
+    )
+
+    notes = Column(Text, nullable=True)
+
+    created_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+
+# 4. BOOK READING TABLE
+class BookReading(Base):
+    __tablename__ = "book_reading"
+
+    __table_args__ = (
+        Index("fk_reading_user", "user_id"),
+    )
+
+    reading_id = Column(
+        BIGINT(unsigned=True),
+        primary_key=True,
+        autoincrement=True
+    )
+
+    user_id = Column(
+        BIGINT(unsigned=True),
+        ForeignKey("users.user_id", name="fk_reading_user", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    reading_date = Column(Date, nullable=False)
+    book_title = Column(String(255), nullable=False)
+
+    pages_read = Column(
+        INTEGER(unsigned=True),
+        nullable=True,
+        server_default=text("0")
+    )
+
+    reading_minutes = Column(
+        INTEGER(unsigned=True),
+        nullable=True,
+        server_default=text("0")
+    )
+
+    notes = Column(Text, nullable=True)
+
+    created_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+
+# 5. HEARING RECORDS TABLE
+class HearingRecord(Base):
+    __tablename__ = "hearing_records"
+
+    __table_args__ = (
+        Index("fk_hearing_user", "user_id"),
+    )
+
+    hearing_id = Column(
+        BIGINT(unsigned=True),
+        primary_key=True,
+        autoincrement=True
+    )
+
+    user_id = Column(
+        BIGINT(unsigned=True),
+        ForeignKey("users.user_id", name="fk_hearing_user", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    hearing_date = Column(Date, nullable=False)
+    topic = Column(String(255), nullable=False)
+    speaker_name = Column(String(150), nullable=True)
+
+    source = Column(
+        ENUM(
+            "Srimad Bhagavatam Class",
+            "Bhagavad Gita Class",
+            "Lecture",
+            "Kirtan",
+            "Other"
+        ),
+        nullable=True,
+        server_default=text("'Lecture'")
+    )
+
+    duration_minutes = Column(
+        INTEGER(unsigned=True),
+        nullable=True,
+        server_default=text("0")
+    )
+
+    notes = Column(Text, nullable=True)
+
+    created_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+
+# 6. SEVA RECORDS TABLE
+class SevaRecord(Base):
+    __tablename__ = "seva_records"
+
+    __table_args__ = (
+        Index("fk_seva_user", "user_id"),
+    )
+
+    seva_id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+
+    user_id = Column(
+        BIGINT(unsigned=True),
+        ForeignKey("users.user_id", name="fk_seva_user", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    seva_date = Column(Date, nullable=False)
+    seva_type = Column(String(150), nullable=False)
+    description = Column(Text, nullable=True)
+
+    duration_minutes = Column(
+        INTEGER(unsigned=True),
+        nullable=True,
+        server_default=text("0")
+    )
+
+    created_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+
+# 7. DAILY REPORTS TABLE
+class DailyReport(Base):
+    __tablename__ = "daily_reports"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "report_date",
+            name="unique_user_report_date"
+        ),
+    )
+
+    report_id = Column(
+        BIGINT(unsigned=True),
+        primary_key=True,
+        autoincrement=True
+    )
+
+    user_id = Column(
+        BIGINT(unsigned=True),
+        ForeignKey("users.user_id", name="fk_report_user", ondelete="CASCADE"),
+        nullable=False
+    )
+
+    report_date = Column(Date, nullable=False)
+    reflection = Column(Text, nullable=True)
+    gratitude = Column(Text, nullable=True)
+    challenges = Column(Text, nullable=True)
+
+    created_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    updated_at = Column(
+        TIMESTAMP,
+        nullable=True,
+        server_default=text("CURRENT_TIMESTAMP"),
+        server_onupdate=FetchedValue()
+    )
+===== MODELS INIT =====
+from .models import (
+    User,
+    DevoteeProfile,
+    JapaRecord,
+    BookReading,
+    HearingRecord,
+    SevaRecord,
+    DailyReport,
+)
+
+__all__ = [
+    "User",
+    "DevoteeProfile",
+    "JapaRecord",
+    "BookReading",
+    "HearingRecord",
+    "SevaRecord",
+    "DailyReport",
+]
+===== DATABASE INIT =====
+
+===== CORE STRUCTURE =====
+Folder PATH listing
+Volume serial number is 00000059 1A43:AE09
+C:\USERS\DESKTOP\DESKTOP\NITYASADHANA\BACKEND\APP\CORE
+No subfolders exist 
+
+
+===== DATABASE STRUCTURE =====
+Folder PATH listing
+Volume serial number is 0000004E 1A43:AE09
+C:\USERS\DESKTOP\DESKTOP\NITYASADHANA\BACKEND\APP\DATABASE
+    __init__.py
+    
+No subfolders exist 
+
+
+===== REQUIREMENTS =====
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.16.0
+click==8.5.1
+fastapi==0.162.2
+h11==0.16.0
+idna==3.20
+opentelemetry-api==1.45.2
+pydantic==2.14.3
+pydantic_core==2.50.4
+PyMySQL==1.2.3
+python-dotenv==1.2.4
+SQLAlchemy==2.1.8
+starlette==1.10.0
+typing-inspection==0.4.5
+typing_extensions==4.16.0
+uvicorn==0.54.0
+
+===== FRONTEND STRUCTURE =====
+Folder PATH listing
+Volume serial number is 000000EE 1A43:AE09
+C:\USERS\DESKTOP\DESKTOP\NITYASADHANA\FRONTEND\SRC
+|   App.css
+|   App.jsx
+|   index.css
+|   main.jsx
+|   
++---assets
+|       hero.png
+|       react.svg
+|       vite.svg
+|       
++---components
++---features
+|   \---sadhana-reports
+|       +---components
+|       +---pages
+|       |       DailySadhanaReport.jsx
+|       |       
+|       \---styles
+|               DailySadhanaReport.css
+|               
++---hooks
++---layouts
++---pages
++---services
+\---utils
+
+===== GIT STATUS =====
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   backend/app/models/__init__.py
+	modified:   backend/database.py
+	modified:   backend/main.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	NITYASADHANA_BACKEND_REVIEW.txt
+	NITYASADHANA_INSPECTION.txt
+	backend/app/models/models.py
+
+no changes added to commit (use "git add" and/or "git commit -a")

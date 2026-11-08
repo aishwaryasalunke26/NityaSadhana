@@ -1,0 +1,109 @@
+[1mdiff --git a/backend/app/models/__init__.py b/backend/app/models/__init__.py[m
+[1mindex e69de29..58927bc 100644[m
+[1m--- a/backend/app/models/__init__.py[m
+[1m+++ b/backend/app/models/__init__.py[m
+[36m@@ -0,0 +1,19 @@[m
+[32m+[m[32mfrom .models import ([m
+[32m+[m[32m    User,[m
+[32m+[m[32m    DevoteeProfile,[m
+[32m+[m[32m    JapaRecord,[m
+[32m+[m[32m    BookReading,[m
+[32m+[m[32m    HearingRecord,[m
+[32m+[m[32m    SevaRecord,[m
+[32m+[m[32m    DailyReport,[m
+[32m+[m[32m)[m
+[32m+[m
+[32m+[m[32m__all__ = [[m
+[32m+[m[32m    "User",[m
+[32m+[m[32m    "DevoteeProfile",[m
+[32m+[m[32m    "JapaRecord",[m
+[32m+[m[32m    "BookReading",[m
+[32m+[m[32m    "HearingRecord",[m
+[32m+[m[32m    "SevaRecord",[m
+[32m+[m[32m    "DailyReport",[m
+[32m+[m[32m][m
+\ No newline at end of file[m
+[1mdiff --git a/backend/database.py b/backend/database.py[m
+[1mindex 3be7c80..2d6bfa3 100644[m
+[1m--- a/backend/database.py[m
+[1m+++ b/backend/database.py[m
+[36m@@ -37,4 +37,10 @@[m [mSessionLocal = sessionmaker([m
+     bind=engine,[m
+ )[m
+ [m
+[31m-Base = declarative_base()[m
+\ No newline at end of file[m
+[32m+[m[32mBase = declarative_base()[m
+[32m+[m[32mdef get_db():[m
+[32m+[m[32m    db = SessionLocal()[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        yield db[m
+[32m+[m[32m    finally:[m
+[32m+[m[32m        db.close()[m
+\ No newline at end of file[m
+[1mdiff --git a/backend/main.py b/backend/main.py[m
+[1mindex b75cdf2..737aaab 100644[m
+[1m--- a/backend/main.py[m
+[1m+++ b/backend/main.py[m
+[36m@@ -1,9 +1,10 @@[m
+[31m-[m
+[32m+[m[32mfrom sqlalchemy import inspect[m
+[32m+[m[32mfrom database import engine[m
+ from fastapi import FastAPI, HTTPException[m
+ from fastapi.middleware.cors import CORSMiddleware[m
+ from sqlalchemy import text[m
+ from sqlalchemy.exc import SQLAlchemyError[m
+[31m-[m
+[32m+[m[32mfrom fastapi import HTTPException[m
+ from database import engine, DB_NAME[m
+ [m
+ app = FastAPI([m
+[36m@@ -59,3 +60,37 @@[m [mdef database_health_check():[m
+             status_code=503,[m
+             detail="MySQL connection failed. Check database configuration."[m
+         )[m
+[32m+[m
+[32m+[m[32m@app.get("/api/models-health")[m
+[32m+[m[32mdef models_health():[m
+[32m+[m[32m    try:[m
+[32m+[m[32m        tables = inspect(engine).get_table_names()[m
+[32m+[m
+[32m+[m[32m        expected_tables = [[m
+[32m+[m[32m            "users",[m
+[32m+[m[32m            "devotee_profiles",[m
+[32m+[m[32m            "japa_records",[m
+[32m+[m[32m            "book_reading",[m
+[32m+[m[32m            "hearing_records",[m
+[32m+[m[32m            "seva_records",[m
+[32m+[m[32m            "daily_reports",[m
+[32m+[m[32m        ][m
+[32m+[m
+[32m+[m[32m        found_tables = [[m
+[32m+[m[32m            table for table in expected_tables[m
+[32m+[m[32m            if table in tables[m
+[32m+[m[32m        ][m
+[32m+[m
+[32m+[m[32m        return {[m
+[32m+[m[32m            "status": "success" if len(found_tables) == 7 else "incomplete",[m
+[32m+[m[32m            "models_registered": 7,[m
+[32m+[m[32m            "tables_found": len(found_tables),[m
+[32m+[m[32m            "tables": found_tables,[m
+[32m+[m[32m            "message": "NityaSadhana database models verification completed"[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m    except Exception as e:[m
+[32m+[m[32m        raise HTTPException([m
+[32m+[m[32m            status_code=503,[m
+[32m+[m[32m            detail="Database model verification failed"[m
+[32m+[m[32m        )[m
+\ No newline at end of file[m
+[1mdiff --git a/backend/requirements.txt b/backend/requirements.txt[m
+[1mindex e9b0e51..ac2ee82 100644[m
+[1m--- a/backend/requirements.txt[m
+[1m+++ b/backend/requirements.txt[m
+[36m@@ -15,3 +15,5 @@[m [mstarlette==1.10.0[m
+ typing-inspection==0.4.5[m
+ typing_extensions==4.16.0[m
+ uvicorn==0.54.0[m
+[32m+[m[32mpwdlib[argon2][m
+[32m+[m[32mPyJWT[m
