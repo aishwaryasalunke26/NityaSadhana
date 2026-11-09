@@ -28,27 +28,13 @@ router = APIRouter(
 )
 
 
-@router.get(
-    "/me",
-    response_model=DashboardStats,
-)
-def get_dashboard_statistics(
-    start_date: date | None = Query(None),
-    end_date: date | None = Query(None),
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db),
+def generate_dashboard_statistics(
+    start_date: date,
+    end_date: date,
+    current_user: User,
+    db: Session,
 ):
 
-    # 1. Set default date range
-    today = date.today()
-
-    if end_date is None:
-        end_date = today
-
-    if start_date is None:
-        start_date = end_date - timedelta(days=6)
-
-    # 2. Validate date range
     if start_date > end_date:
         raise HTTPException(
             status_code=400,
@@ -57,32 +43,32 @@ def get_dashboard_statistics(
 
     total_days = (end_date - start_date).days + 1
 
-    # 3. Initialize daily statistics
+    if total_days > 366:
+        raise HTTPException(
+            status_code=400,
+            detail="Date range cannot exceed 366 days.",
+        )
+
     daily_data = {}
 
     current_date = start_date
 
     while current_date <= end_date:
-
         daily_data[current_date] = {
             "activity_date": current_date,
-
             "japa_rounds": 0,
-
             "reading_sessions": 0,
             "reading_pages": 0,
             "reading_minutes": 0,
-
             "hearing_sessions": 0,
             "hearing_minutes": 0,
-
             "seva_activities": 0,
             "seva_minutes": 0,
         }
 
         current_date += timedelta(days=1)
 
-    # 4. Get Japa records
+    # Japa statistics
     japa_records = (
         db.query(JapaRecord)
         .filter(
@@ -98,7 +84,7 @@ def get_dashboard_statistics(
             record.rounds_completed or 0
         )
 
-    # 5. Get Book Reading records
+    # Book reading statistics
     reading_records = (
         db.query(BookReading)
         .filter(
@@ -116,7 +102,7 @@ def get_dashboard_statistics(
         day["reading_pages"] += int(record.pages_read or 0)
         day["reading_minutes"] += int(record.reading_minutes or 0)
 
-    # 6. Get Hearing records
+    # Hearing statistics
     hearing_records = (
         db.query(HearingRecord)
         .filter(
@@ -133,7 +119,7 @@ def get_dashboard_statistics(
         day["hearing_sessions"] += 1
         day["hearing_minutes"] += int(record.duration_minutes or 0)
 
-    # 7. Get Seva records
+    # Seva statistics
     seva_records = (
         db.query(SevaRecord)
         .filter(
@@ -150,7 +136,7 @@ def get_dashboard_statistics(
         day["seva_activities"] += 1
         day["seva_minutes"] += int(record.duration_minutes or 0)
 
-    # 8. Prepare daily response
+    # Prepare daily statistics
     daily_stats = []
 
     for day in daily_data.values():
@@ -168,7 +154,7 @@ def get_dashboard_statistics(
             )
         )
 
-    # 9. Calculate overall totals
+    # Calculate totals
     total_japa_rounds = sum(
         day.japa_rounds for day in daily_stats
     )
@@ -207,25 +193,106 @@ def get_dashboard_statistics(
         + total_seva_minutes
     )
 
-    # 10. Return dashboard statistics
     return DashboardStats(
         start_date=start_date,
         end_date=end_date,
         total_days=total_days,
-
         total_japa_rounds=total_japa_rounds,
-
         total_reading_sessions=total_reading_sessions,
         total_reading_pages=total_reading_pages,
         total_reading_minutes=total_reading_minutes,
-
         total_hearing_sessions=total_hearing_sessions,
         total_hearing_minutes=total_hearing_minutes,
-
         total_seva_activities=total_seva_activities,
         total_seva_minutes=total_seva_minutes,
-
         total_activity_minutes=total_activity_minutes,
-
         daily_stats=daily_stats,
+    )
+
+
+# 1. Default / custom dashboard date range
+@router.get("/me", response_model=DashboardStats)
+def get_dashboard_statistics(
+    start_date: date | None = Query(None),
+    end_date: date | None = Query(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+
+    today = date.today()
+
+    if end_date is None:
+        end_date = today
+
+    if start_date is None:
+        start_date = end_date - timedelta(days=6)
+
+    return generate_dashboard_statistics(
+        start_date,
+        end_date,
+        current_user,
+        db,
+    )
+
+
+# 2. Weekly statistics (Monday to Sunday)
+@router.get("/weekly", response_model=DashboardStats)
+def get_weekly_statistics(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+
+    today = date.today()
+
+    start_date = today - timedelta(days=today.weekday())
+    end_date = start_date + timedelta(days=6)
+
+    return generate_dashboard_statistics(
+        start_date,
+        end_date,
+        current_user,
+        db,
+    )
+
+
+# 3. Monthly statistics
+@router.get("/monthly", response_model=DashboardStats)
+def get_monthly_statistics(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+
+    today = date.today()
+
+    start_date = today.replace(day=1)
+
+    if today.month == 12:
+        next_month = date(today.year + 1, 1, 1)
+    else:
+        next_month = date(today.year, today.month + 1, 1)
+
+    end_date = next_month - timedelta(days=1)
+
+    return generate_dashboard_statistics(
+        start_date,
+        end_date,
+        current_user,
+        db,
+    )
+
+
+# 4. Custom date-range statistics
+@router.get("/custom", response_model=DashboardStats)
+def get_custom_statistics(
+    start_date: date = Query(...),
+    end_date: date = Query(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+
+    return generate_dashboard_statistics(
+        start_date,
+        end_date,
+        current_user,
+        db,
     )
