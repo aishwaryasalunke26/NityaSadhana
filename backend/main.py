@@ -12,6 +12,8 @@ from app.routers.profile import router as profile_router
 from app.routers.japa import router as japa_router
 from app.routers.reading import router as reading_router
 from app.routers.seva import router as seva_router
+from app.routers.reports import router as reports_router
+
 
 app = FastAPI(
     title="NityaSadhana API",
@@ -45,6 +47,8 @@ app.include_router(japa_router)
 app.include_router(reading_router)
 
 app.include_router(seva_router)
+
+app.include_router(reports_router)
 
 
 @app.get("/")
