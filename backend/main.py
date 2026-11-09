@@ -14,7 +14,8 @@ from app.routers.reading import router as reading_router
 from app.routers.seva import router as seva_router
 from app.routers.reports import router as reports_router
 from app.routers.hearing import router as hearing_router
-
+from app.routers.summary import router as summary_router
+from app.routers.dashboard import router as dashboard_router
 
 app = FastAPI(
     title="NityaSadhana API",
@@ -53,6 +54,9 @@ app.include_router(reports_router)
 
 app.include_router(hearing_router)
 
+app.include_router(summary_router)
+
+app.include_router(dashboard_router)
 
 @app.get("/")
 def home():
