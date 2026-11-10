@@ -10,6 +10,7 @@ from sqlalchemy import (
     text,
     func,
     FetchedValue,
+    JSON,
 )
 from sqlalchemy.dialects.mysql import BIGINT, INTEGER, ENUM
 
@@ -262,6 +263,16 @@ class DailyReport(Base):
         primary_key=True,
         autoincrement=True
     )
+
+    report_data = Column(JSON, nullable=True)
+
+    status = Column(
+        String(20),
+        nullable=False,
+        server_default=text("'Draft'")
+    )
+
+    submitted_at = Column(TIMESTAMP, nullable=True)
 
     user_id = Column(
         BIGINT(unsigned=True),

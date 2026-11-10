@@ -1,5 +1,12 @@
 import DailySadhanaReport from "./features/sadhana-reports/pages/DailySadhanaReport";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import AuthPage from "./features/auth/AuthPage";
+import {
+  authAPI,
+  getToken,
+  getStoredUser,
+  clearAuthData,
+} from "./services/api";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -39,6 +46,78 @@ const navigation = [
 function App() {
   const [activePage, setActivePage] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [user, setUser] = useState(getStoredUser());
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // Check whether the user is already logged in
+  useEffect(() => {
+    let mounted = true;
+
+    const verifyAuth = async () => {
+      if (!getToken()) {
+        if (mounted) setCheckingAuth(false);
+        return;
+      }
+
+      try {
+        const currentUser = await authAPI.me();
+
+        if (mounted) {
+          setUser(currentUser);
+        }
+      } catch {
+        clearAuthData();
+
+        if (mounted) {
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setCheckingAuth(false);
+        }
+      }
+    };
+
+    verifyAuth();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Called after successful login or registration
+  const handleAuthenticated = (authenticatedUser) => {
+    setUser(authenticatedUser);
+    setActivePage("Dashboard");
+  };
+
+  // Logout the current user
+  const handleLogout = async () => {
+    try {
+      await authAPI.logout();
+    } catch {
+      clearAuthData();
+    } finally {
+      setUser(null);
+      setActivePage("Dashboard");
+      setSidebarOpen(false);
+    }
+  };
+
+  // Show loading while checking login
+  if (checkingAuth) {
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        Loading NityaSadhana...
+      </div>
+    );
+  }
+
+  // Show login/register if the user is not logged in
+  if (!user) {
+    return <AuthPage onAuthenticated={handleAuthenticated} />;
+  }
 
   const today = new Date().toLocaleDateString("en-IN", {
     weekday: "long",
@@ -165,14 +244,14 @@ function App() {
               <span className="notification-dot"></span>
             </button>
 
-            <div className="top-avatar">D</div>
+            <div className="top-avatar">
+  {(user?.name || user?.email || "D").charAt(0).toUpperCase()}
+</div>
           </div>
         </header>
 
         {activePage === "Daily Sadhana Report" ? (
-  <DailySadhanaReport
-    onClick={() => setActivePage("Dashboard")}
-  />
+ <DailySadhanaReport onBack={() => setActivePage("Dashboard")} />
 ) : activePage === "Dashboard" ? (
           <div className="dashboard">
             <section className="welcome-section">

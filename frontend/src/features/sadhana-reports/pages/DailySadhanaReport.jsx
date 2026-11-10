@@ -1,4 +1,4 @@
-
+import { reportAPI } from "../../../services/api";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
@@ -23,8 +23,13 @@ import {
 
 import "../styles/DailySadhanaReport.css";
 
-const today = new Date().toISOString().slice(0, 10);
-const storageKey = `nityasadhana-report-${today}`;
+const today = (() => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+})();
 
 const initialData = {
   wakeTime: "",
@@ -138,19 +143,43 @@ export default function DailySadhanaReport({ onBack }) {
   
 
   useEffect(() => {
-    const stored = localStorage.getItem(storageKey);
+  let active = true;
 
-    if (stored) {
-      try {
-        const report = JSON.parse(stored);
-        setData({ ...initialData, ...report.data });
-        setStatus(report.status || "Draft");
-        setSubmittedAt(report.submittedAt || null);
-      } catch {
-        localStorage.removeItem(storageKey);
+  const loadTodayReport = async () => {
+    try {
+      const report = await reportAPI.today();
+
+      if (!active) return;
+
+      setData({
+        ...initialData,
+        ...(report.report_data || {}),
+      });
+
+      setStatus(report.status || "Draft");
+      setSubmittedAt(
+        report.submitted_at
+          ? new Date(report.submitted_at).getTime()
+          : null
+      );
+    } catch (error) {
+      if (!active) return;
+
+      if (error.message.toLowerCase().includes("not found")) {
+        setStatus("New");
+        setSubmittedAt(null);
+      } else {
+        setMessage(`Unable to load today's report: ${error.message}`);
       }
     }
-  }, []);
+  };
+
+  loadTodayReport();
+
+  return () => {
+    active = false;
+  };
+}, []);
 
   const isLocked =
     status === "Submitted" &&
@@ -182,29 +211,37 @@ export default function DailySadhanaReport({ onBack }) {
     };
   }, [data]);
 
-  const saveToStorage = (
-  nextStatus,
-  nextData = data,
-  nextSubmittedAt = submittedAt
-) => {
-  const report = {
-    date: today,
-    data: nextData,
-    status: nextStatus,
-    submittedAt: nextSubmittedAt,
-  };
+  const saveReport = async (nextStatus) => {
+  try {
+    const report =
+      nextStatus === "Submitted"
+        ? await reportAPI.submit(today, data)
+        : await reportAPI.save(today, data);
 
-  localStorage.setItem(storageKey, JSON.stringify(report));
+    setStatus(report.status);
 
-  setStatus(nextStatus);
-  setSubmittedAt(nextSubmittedAt);
-  setEditingSubmitted(false);
+    setSubmittedAt(
+      report.submitted_at
+        ? new Date(report.submitted_at).getTime()
+        : null
+    );
+
+    setEditingSubmitted(false);
+
+    return report;
+  } catch (error) {
+    setMessage(`Error: ${error.message}`);
+    return null;
+  }
 };
-  const handleDraft = () => {
-    saveToStorage("Draft");
-    setMessage("Draft saved successfully.");
-    setTimeout(() => setMessage(""), 3000);
-  };
+
+const handleDraft = async () => {
+  const report = await saveReport("Draft");
+
+  if (report) {
+    setMessage("Draft saved successfully to the database.");
+  }
+};
 
   const handlePreview = () => {
     
@@ -217,42 +254,43 @@ export default function DailySadhanaReport({ onBack }) {
   setShowPreview(false);
 };
 
-  const handleSubmit = () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to submit today's Sadhana Report? You can edit it within 24 hours."
-    );
+  const handleSubmit = async () => {
+  const confirmed = window.confirm(
+    "Are you sure you want to submit today's Sadhana Report? You can edit it within 24 hours."
+  );
 
-    if (!confirmed) return;
+  if (!confirmed) return;
 
-    const now = Date.now();
-    saveToStorage("Submitted", data, now);
+  const report = await saveReport("Submitted");
+
+  if (report) {
     setShowPreview(false);
     setMessage("Your report has been submitted successfully.");
-  };
+  }
+};
 
-  const handleCopyPrevious = () => {
-    const previousDate = new Date();
-    previousDate.setDate(previousDate.getDate() - 1);
-    const previousKey = `nityasadhana-report-${previousDate.toISOString().slice(0, 10)}`;
-    const previousReport = localStorage.getItem(previousKey);
+  const handleCopyPrevious = async () => {
+  try {
+    const previousReport = await reportAPI.previous();
 
-    if (!previousReport) {
-      setMessage("No previous day's report found in this browser.");
-      return;
-    }
+    setData({
+      ...initialData,
+      ...(previousReport.report_data || {}),
+    });
 
-    try {
-      const parsed = JSON.parse(previousReport);
-      setData({ ...initialData, ...parsed.data });
-      setStatus("Draft");
-      setSubmittedAt(null);
-      
-      setShowPreview(false);
-      setMessage("Previous report copied. Please review today's details.");
-    } catch {
-      setMessage("Previous report could not be read.");
-    }
-  };
+    setShowPreview(false);
+
+    setMessage(
+      "Previous day's report copied. Please review today's details and save."
+    );
+  } catch (error) {
+    setMessage(
+      error.message.toLowerCase().includes("not found")
+        ? "No previous day's report found."
+        : `Unable to copy previous report: ${error.message}`
+    );
+  }
+};
 
   const fieldDisabled = isLocked || (isReadOnly && !showPreview);
 

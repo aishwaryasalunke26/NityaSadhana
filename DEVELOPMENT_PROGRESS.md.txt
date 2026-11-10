@@ -1,103 +1,193 @@
-# NityaSadhana – Development Progress Log
 
-**Date:** 7 November 2026  
-**Project:** ISKCON Sadhana Report Management System
+NityaSadhana – Development Progress Log
+Project: ISKCON Sadhana Report Management System
+Last updated: 9 November 2026
 
-## 1. Project Technology
+1. Project Technology
+Component	Technology
+Frontend	React + Vite
+Backend	Python + FastAPI
+Database	MySQL (as recorded in the 7 November project setup; verify against the current backend configuration before changing it)
+ORM	SQLAlchemy
+Database driver	PyMySQL (as recorded in the 7 November project setup)
+API architecture	REST API
+Frontend port	5173
+Backend port	8000
+Important: Do not change the database configuration or install a different database driver just because of this progress-log update. Check the current backend configuration and .env first if database work is needed.
 
-- Frontend: React + Vite
-- Backend: Python + FastAPI
-- Database: MySQL
-- ORM: SQLAlchemy
-- Database Driver: PyMySQL
-- API Architecture: REST API
-- Frontend Port: 5173
-- Backend Port: 8000
+2. Work Completed – 7 November 2026
+Frontend
+Continued development of the React frontend.
+Worked on the Daily Sadhana Report form.
+Maintained the devotional light-theme design.
+Included Japa, Reading, Hearing (Shravanam), Seva and Sleeping Time sections.
+Backend setup
+Created the backend directory.
+Created and activated the Python virtual environment.
+Installed FastAPI, Uvicorn, SQLAlchemy, PyMySQL and python-dotenv.
+Generated requirements.txt.
+Created the app structure, including routers, models, schemas and database directories.
+Created Python initialization files.
+Created app/main.py.
+Configured the FastAPI application and CORS for the React frontend.
+Added GET / and GET /api/health endpoints.
+Started FastAPI using Uvicorn and reached the API testing stage.
+Git and GitHub
+The existing Git repository was previously confirmed on the main branch.
+The previous repository status was clean and synchronized with origin/main.
+New changes required a fresh Git status check, review, commit and push.
+3. Backend Development – Completed by 9 November 2026
+The following backend modules have been developed:
 
-## 2. Work Completed – 7 November 2026
+Authentication – registration and login.
+Devotee Profile – profile operations.
+Japa – Japa record operations.
+Book Reading – reading record operations.
+Hearing – hearing/listening record operations.
+Seva – service record operations.
+Daily Reports – report operations.
+Daily Summary – combined daily information.
+Dashboard – statistics endpoints; four dashboard statistics endpoints were reported as completed.
+The exact routes and supported HTTP methods must be confirmed from the running API documentation before integration testing. Do not assume that every module supports delete or every possible CRUD operation.
 
-### Frontend
-- Continued development of the React frontend.
-- Worked on the Daily Sadhana Report form.
-- Maintained devotional light-theme design.
-- Included Japa, Reading, Hearing (Shravanam), Seva and Sleeping Time sections.
+4. Current Backend Structure
+The project root currently contains these folders (confirmed from the project-folder screenshot):
 
-### Backend
-- Created the backend directory.
-- Created Python virtual environment.
-- Activated virtual environment.
-- Installed FastAPI, Uvicorn, SQLAlchemy, PyMySQL and python-dotenv.
-- Generated requirements.txt.
-- Created app directory.
-- Created routers, models, schemas and database directories.
-- Created Python initialization files.
-- Created app/main.py.
-- Configured FastAPI application.
-- Configured CORS for React frontend.
-- Added GET / endpoint.
-- Added GET /api/health endpoint.
-- Started FastAPI using Uvicorn.
-- Reached backend API testing stage.
+NityaSadhana/
+├── .venv/
+├── backend/
+├── frontend/
+├── .gitignore
+├── DEVELOPMENT_PROGRESS.md
+├── NITYASADHANA_BACKEND_REVIEW
+├── NITYASADHANA_FRONTEND_REVIEW
+├── NITYASADHANA_INSPECTION
+├── PROJECT_HANDOVER.md
+├── SRS
+├── TASK_TRACKER.md
+└── other project notes
+The screenshot confirms that both backend/ and frontend/ folders exist. Inspect their current contents before creating, replacing or scaffolding files.
 
-### Git and GitHub
-- Existing Git repository was previously confirmed on main.
-- Previous repository status was clean and synchronized with origin/main.
-- Today's new changes still need a fresh Git status check, commit and push.
+The earlier 7 November log recorded a backend-local venv/. The project-root screenshot also shows .venv/. Check which environment the current backend actually uses; do not delete either environment without verifying.
 
-## 3. Current Backend Structure
+5. Work Attempted – 9 November 2026
+Continued backend development through the Hearing, Seva, Reports, Summary and Dashboard work.
+Confirmed that the backend was intended to be running before beginning integration testing.
+Prepared to start Phase 1: backend integration testing.
+Attempted to open FastAPI Swagger at http://127.0.0.1:8000/docs.
+Swagger stayed on a blank/loading page.
+Requests to http://127.0.0.1:8000/ and http://127.0.0.1:8000/openapi.json did not return response bytes and timed out.
+netstat -ano | findstr :8000 showed port 8000 in LISTENING state under PID 2736, with several unfinished local connections.
+An initial uvicorn main:app --reload attempt from C:\Users\DESKTOP failed because the command was run outside the backend folder and without activating the backend virtual environment.
+The correct backend directory used in the troubleshooting steps was:
+C:\Users\DESKTOP\Desktop\NityaSadhana\backend
+The intended activation command was:
+venv\Scripts\activate
+The proposed diagnostic server command was:
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --log-level debug
+6. Current Blocker – FastAPI Is Not Returning HTTP Responses
+Status: Unresolved. Do not mark Swagger or the backend as fixed.
 
-backend/
-- venv/
-- requirements.txt
-- app/
-  - __init__.py
-  - main.py
-  - routers/
-  - models/
-  - schemas/
-  - database/
+Evidence collected:
 
-## 4. Pending Work
+Port 8000 accepted TCP connections.
+PID 2736 was shown as listening at the time of the check.
+curl --max-time 5/10 to /, /docs and /openapi.json timed out with zero bytes received.
+The browser displayed a blank/loading Swagger page.
+The root cause has not been identified. A stuck server process, application request handling, middleware or database access are possible areas to investigate, but none has been confirmed.
 
-- Verify MySQL Server installation and availability.
-- Create nityasadhana database.
-- Configure .env and .gitignore.
-- Create database connection.
-- Test MySQL connectivity.
-- Create SQLAlchemy models.
-- Create database tables.
-- Develop registration and login APIs.
-- Develop Daily Sadhana Report APIs.
-- Implement draft saving.
-- Implement report submission.
-- Implement duplicate report prevention.
-- Implement 24-hour editing restriction.
-- Connect React frontend to FastAPI.
-- Test all modules.
-- Update GitHub.
+Safety rules while diagnosing
+Do not delete the database or virtual environment.
+Do not reinstall packages without evidence.
+Do not edit main.py, routers, models or middleware blindly.
+Do not start integration testing until /openapi.json returns a valid response.
+Keep the backend terminal output available so startup errors, tracebacks and request logs can be inspected.
+7. Next Session – Exact Starting Point
+Resume with diagnosing the unresponsive FastAPI process. Do not repeat completed backend feature development.
 
-## 5. Next Session Starting Point
+Open CMD and inspect the current listener:
+netstat -ano | findstr :8000
+Check the PID shown by the current netstat output (it may no longer be 2736):
+tasklist /FI "PID eq 2736"
+Replace 2736 with the current PID if it has changed.
+Stop the old server normally from its original CMD window using CTRL+C. Use taskkill /PID <current_pid> /T /F only if it cannot be stopped normally.
+Enter the backend folder and activate the environment:
+cd /d C:\Users\DESKTOP\Desktop\NityaSadhana\backend
+venv\Scripts\activate
+If the activation script is not found, inspect the folder and determine which environment is actually used. Do not create or delete environments yet.
+Start one server process without auto-reload:
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --log-level debug
+Keep the backend CMD visible. In a second CMD, test:
+curl --max-time 10 -i http://127.0.0.1:8000/
+curl --max-time 10 -i http://127.0.0.1:8000/openapi.json
+Inspect the complete backend terminal output, including startup messages, request logs and any Python traceback. Diagnose from the evidence before modifying code.
+Once /openapi.json responds with JSON, open:
+http://127.0.0.1:8000/docs
+Then begin backend integration testing.
+8. Integration Testing – Pending
+After the API responds correctly, test the actual endpoints shown in Swagger:
 
-**Continue from: MySQL database connection.**
+Module	Tests to perform
+Authentication	Register, login, invalid password, token validation
+Profile	Create, view and update
+Japa	Create, view and update; duplicate-date behavior
+Reading	Create, view and update
+Hearing	Create, view and update
+Seva	Create, view, update and delete if implemented
+Daily Reports	Create, view and update if implemented
+Daily Summary	Verify combined daily information
+Dashboard	Daily, weekly, monthly and custom-date statistics
+Security and validation checks
+Requests without a token should be rejected for protected routes.
+Invalid request data should return an appropriate validation response.
+One user must not be able to access another user's records.
+Date filters should return records only from the requested period.
+Check database connectivity and model/table health.
+Test duplicate Japa dates according to the intended database rules.
+Record actual status codes and results. Do not mark a test as passed until it has been executed.
 
-Do not repeat:
-- Backend folder creation.
-- Virtual environment creation.
-- Python package installation.
-- Backend app folder creation.
-- Initialization file creation.
-- Basic main.py creation.
+9. Frontend Work – Pending After Backend Testing
+The frontend/ folder already exists. Inspect it before running any Vite setup command.
 
-First inspect the existing files and Git status.
+Planned frontend work:
 
-## 6. Development Rule
+Verify or complete the React + Vite setup.
+Configure Axios for FastAPI communication.
+Configure React Router and protected routes.
+Build Login and Registration pages.
+Build Devotee Profile pages.
+Build Japa, Book Reading, Hearing and Seva tracking pages.
+Build Daily Reflection pages.
+Build the Dashboard with daily, weekly and monthly statistics and charts.
+Test responsive layouts and frontend/backend integration.
+Potential frontend libraries from the roadmap:
 
-After each development session:
-1. Update DEVELOPMENT_PROGRESS.md.
-2. Update TASK_TRACKER.md.
-3. Test newly implemented functionality.
-4. Check Git status.
-5. Commit and push verified changes to GitHub.
-6. Record the next starting point.
+Axios
+React Router
+Recharts
+Lucide React
+Install only after inspecting the existing frontend/package.json and source files.
 
-**Last updated:** 7 November 2026
+10. Git and Documentation Procedure
+At the beginning of the next session, inspect the repository:
+
+cd /d C:\Users\DESKTOP\Desktop\NityaSadhana
+git status
+git branch --show-current
+git remote -v
+Review changed files before staging. Do not use git add . blindly. Never commit virtual environments, secrets, local database files or generated caches.
+
+After verified work:
+
+Update DEVELOPMENT_PROGRESS.md.
+Update TASK_TRACKER.md.
+Test the changed functionality.
+Review git status and the diff.
+Stage only intended files.
+Commit and push to the correct remote branch.
+11. Next Milestone
+First: Restore a FastAPI service that returns valid HTTP responses and loads Swagger.
+Second: Complete backend integration and security testing.
+Third: Continue React + Vite frontend integration.
+
+Handover note: Backend module development is not the task to repeat. The immediate task is diagnosing the existing server hang, then testing the completed APIs.
