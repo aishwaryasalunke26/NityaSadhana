@@ -1,0 +1,70 @@
+NityaSadhana – Development Progress Note
+
+Date: 10 November 2026
+
+Completed Work: Login & Registration Integration
+
+Today, we successfully completed the authentication integration in the NityaSadhana project.
+
+1. Work Completed
+- Integrated the Login page with the backend API.
+- Integrated the Registration page.
+- Connected frontend authentication with the backend.
+- Implemented user authentication verification.
+- Added automatic login persistence using local storage.
+- Displayed the logged-in user's email/name in the dashboard.
+- Implemented Logout functionality.
+- Added authentication checking when the application starts.
+- Verified that the frontend builds successfully.
+- Successfully tested the application.
+2. Current Project Status
+Authentication Working
+- Login – Completed
+- Registration – Completed
+- Backend API connection – Working
+- User session persistence – Working
+- Logout – Working
+- Dashboard access after login – Working
+3. Next Task: Dashboard Database Integration
+
+When development resumes, we will work on connecting the dashboard with actual database information.
+
+Planned tasks:
+1. Connect real Japa data.
+2. Connect Reading data.
+3. Connect Hearing data.
+4. Calculate and display Total Sadhana.
+5. Display actual Weekly Consistency.
+6. Remove placeholder values from dashboard cards.
+7. Verify that dashboard information is fetched from the backend.
+4. Project Location
+C:\Users\DESKTOP\Desktop\NityaSadhana
+
+
+5. Commands to Start the Project
+
+Backend – CMD Window 1:
+cd /d C:\Users\DESKTOP\Desktop\NityaSadhana\backend
+venv\Scripts\activate
+uvicorn app.main:app --reload --port 8001
+
+
+Frontend – CMD Window 2:
+cd /d C:\Users\DESKTOP\Desktop\NityaSadhana\frontend
+npm run dev
+
+
+6. Next Development Session
+
+Continue from Dashboard Database Integration.
+
+Important instructions:
+- Do not repeat completed authentication work.
+- Preserve the existing dashboard design.
+- Do not break Login, Registration, or Logout.
+- Continue with simple, step-by-step instructions.
+- Use Windows CMD commands.
+- Verify the existing backend API and database structure before changing code.
+Today's milestone: NityaSadhana authentication integration successfully completed!
+
+Hare Krishna! 🙏
