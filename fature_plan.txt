@@ -1,0 +1,199 @@
+1. NityaSadhana – Development Record
+NityaSadhana
+Progress recorded
+
+Project Development Log
+11 November 2026 · Development Session
+
+Project: ISKCON Sadhana Report Management System
+
+Project location: C:\Users\DESKTOP\Desktop\NityaSadhana
+
+Frontend: React + Vite
+
+Backend: Python + FastAPI
+
+Database: Existing SQLAlchemy database integration
+
+Today's work completed
+1. Reviewed frontend dashboard structure.
+2. Verified existing four statistics cards:
+   - Japa Rounds
+   - Reading
+   - Hearing
+   - Total Sadhana
+3. Verified existing dashboardAPI in src/services/api.js.
+4. Reviewed backend dashboard router.
+5. Verified backend dashboard statistics calculations for Japa, Reading, Hearing and Seva.
+6. Verified weekly statistics endpoint (Monday–Sunday).
+7. Checked dashboard schema and response fields.
+8. Checked frontend dashboard states and API import.
+9. Successfully built the frontend using Vite 8.3.6.
+Frontend build successful
+2064 modules transformed · Build completed in 1.09 seconds
+
+Issues remaining
+- Backend startup encountered Windows [WinError 10013].
+- Browser login displayed Failed to fetch.
+- Dashboard API fetching and live statistics display are not yet verified.
+- Daily report submission and automatic dashboard refresh are not yet verified.
+- Weekly consistency display still requires frontend integration and testing.
+
+2. Future development plan
+This is the order in which we should continue next time.
+Step	Future task	Status
+1	Resolve backend startup / port issue	Pending
+2	Verify backend health and API	Pending
+3	Fix frontend-to-backend connection	Pending
+4	Connect four dashboard statistics cards	Pending
+5	Connect Daily Activities values	Pending
+6	Connect Weekly Consistency	Pending
+7	Verify daily report submission	Pending
+8	Automatically refresh dashboard after submission	Pending
+9	Test with actual database records	Pending
+10	Test all dashboard functions	Pending
+
+After dashboard integration, we can continue with:
+- Report History connected to the database.
+- My Progress with weekly and monthly statistics.
+- My Profile integration.
+- Admin dashboard and reports.
+- Final frontend/backend testing.
+- Deployment and project documentation.
+3. Save today's development record
+I recommend keeping this file inside your project:
+
+NityaSadhana\PROJECT_PROGRESS_LOG.md
+
+Here is the complete document to preserve:..............
+# NityaSadhana – Project Development Log
+
+**Date:** 11 November 2026  
+**Project:** ISKCON Sadhana Report Management System  
+**Project Folder:** `NityaSadhana`
+
+## 1. Project Overview
+
+NityaSadhana is a devotional practice tracking system designed to help users record and monitor their daily spiritual activities.
+
+The system includes:
+- User registration and login
+- Dashboard
+- Daily Sadhana Report
+- Japa tracking
+- Book Reading tracking
+- Hearing tracking
+- Seva tracking
+- Weekly and monthly statistics
+- Report History
+- My Progress
+- My Profile
+
+## 2. Work Completed on 11 November 2026
+
+### Frontend
+- Reviewed React dashboard implementation.
+- Verified four existing statistics cards.
+- Verified dashboard API service exists in `src/services/api.js`.
+- Checked dashboard state declarations in `src/App.jsx`.
+- Reviewed Daily Activities and Weekly Consistency components.
+- Preserved the existing dashboard layout and CSS.
+
+### Backend
+- Reviewed `app/routers/dashboard.py`.
+- Reviewed `app/schemas/dashboard.py`.
+- Verified dashboard router registration in `app/main.py`.
+- Verified database queries for:
+  - JapaRecord
+  - BookReading
+  - HearingRecord
+  - SevaRecord
+- Reviewed total activity calculations.
+- Verified weekly statistics endpoint.
+- Verified monthly and custom date-range endpoints.
+
+### Frontend Build
+- Executed `npm run build`.
+- Vite version: 8.3.6.
+- Modules transformed: 2064.
+- Production build completed successfully.
+- Build time: 1.09 seconds.
+
+## 3. Current Issues
+
+1. Backend startup encountered Windows error `[WinError 10013]`.
+2. Frontend login displayed `Failed to fetch`.
+3. Live dashboard data fetching has not been fully verified.
+4. Dashboard statistics display has not been fully verified.
+5. Daily report submission and dashboard refresh have not been tested.
+6. Weekly consistency frontend integration remains pending.
+
+### Backend Environment Information
+
+- Backend directory: `backend`
+- Existing virtual environment: `backend\venv`
+- Python version previously detected: 3.14.5
+- FastAPI and Uvicorn are installed in the existing environment.
+
+**Important:** The correct environment is `venv`, not `.venv`.
+
+## 4. Next Development Tasks
+
+1. Resolve backend startup and port-access issue.
+2. Verify backend health endpoint.
+3. Verify frontend API connection.
+4. Connect Japa Rounds statistics.
+5. Connect Reading minutes.
+6. Connect Hearing minutes.
+7. Connect Total Sadhana.
+8. Connect Daily Activities.
+9. Implement Weekly Consistency display.
+10. Test Daily Sadhana Report submission.
+11. Implement automatic dashboard refresh after successful submission.
+12. Test actual database records.
+13. Verify frontend and backend integration.
+
+## 5. Future Modules
+
+- Report History
+- My Progress
+- My Profile
+- Admin Dashboard
+- Weekly and monthly reports
+- Final system testing
+- Deployment
+
+## 6. Important Project Files
+
+### Frontend
+- `frontend/src/App.jsx`
+- `frontend/src/App.css`
+- `frontend/src/services/api.js`
+- `frontend/src/features/sadhana-reports/pages/DailySadhanaReport.jsx`
+
+### Backend
+- `backend/app/main.py`
+- `backend/app/routers/dashboard.py`
+- `backend/app/schemas/dashboard.py`
+- `backend/database.py`
+- `backend/requirements.txt`
+
+## 7. Last Development Status
+
+Frontend production build: SUCCESSFUL.
+
+Backend dashboard routes: EXISTING AND REVIEWED.
+
+Frontend dashboard live integration: PENDING VERIFICATION.
+
+Backend startup: ISSUE TO RESOLVE.
+
+## 8. Continuation Instructions
+
+Continue from the dashboard database integration stage.
+
+First resolve the backend startup issue, verify the API connection, and then connect the frontend dashboard components to actual database statistics.
+
+Do not redesign the existing dashboard or change its CSS unnecessarily.
+
+**Last updated:** 11 November 2026
